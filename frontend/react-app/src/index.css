@@ -42,3 +42,10 @@
 .btn-login {
   background-color: #3589e8;
 }
+
+.btn-nav {
+  border-color: transparent;
+  background-color: transparent;
+  color: #3589e8;
+  font-size: large;
+}

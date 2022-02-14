@@ -1,0 +1,16 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "API service for the LearnIt project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js"
+  },
+  "author": "TheBoys",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "mongodb": "^4.3.1"
+  }
+}

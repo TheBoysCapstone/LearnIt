@@ -12,8 +12,8 @@
     "react-scripts": "3.4.3"
   },
   "scripts": {
-    "start": "CHOKIDAR_USEPOLLING=true react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "start": "CHOKIDAR_USEPOLLING=true react-scripts  start",
+    "build": "react-scripts  build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

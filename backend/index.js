@@ -1,39 +1,106 @@
 const express = require('express')
 const app = express()
-const {MongoClient} = require('mongodb');
+const mongoose = require('mongoose')
+const User = require('./user');
+const bcrypt = require('bcryptjs')
+const cookieParser = require("cookie-parser")
+const passport = require("passport")
+const LocalStrategy = require("passport-local")
+const session = require('express-session')
+const bodyParser = require("body-parser")
+const cors = require('cors')
 const port = 8080
 
-const dbUri = "mongodb+srv://theboys:learnit_password@learnit.9tsp5.mongodb.net/learnit?retryWrites=true&w=majority"
 
-const client = new MongoClient(dbUri)
-let db = null;
+//connect to database
+mongoose.connect("mongodb+srv://theboys:learnit_password@learnit.9tsp5.mongodb.net/learnit?retryWrites=true&w=majority", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+},
+() => {
+  console.log("Mongoose is connected")
+}
+)
 
-
- 
-  
-  const connectToDatabase = async () => {
-    try {
-    // Connect the client to the server
-    await client.connect();
-    // Establish  connection
-    db =  await client.db("learnit")
-    console.log("Connection to the database established");
-
-    //this line adds a user to the users collection to test the connection
-    //await db.collection("users").insertOne({username: "user1", password: "1234"});
+//setup the json data parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+//this middleware makes cross origin resource sharing(CORS) possible 
+//without it the server will deny all requests made by the client
+//for more info about CORS refer to the MDN docs
+app.use(
+  cors({
+    origin: "http://localhost:3001", // <-- location of the react app we're connecting to
+    credentials: true,
+  })
+);
+//setup the passport local-strategy(authentication with username and password)
+passport.use(new LocalStrategy((username, password, done)=>{
+  User.findOne({username: username}).then((user)=>{
+    if(!user) return done(null, false)
+    bcrypt.compare(password, user.password, (err, result)=>{
+      if(err) throw err
+      if(result){
+        return done (null, user)
+      }
+      else{
+        return done(null, false)
+      }
+    })
     
-  }catch(e){
-      console.error(e)
-  }
-  }
+  })
+}))
+//when a login attempt is successful the user id will be stored in the session
+passport.serializeUser((user, done)=>{
+  done(null, user.id)
+})
+//if the session is still alive this will ensure user will not have to authenticate again
+passport.deserializeUser((id, done)=>{
+  User.findById(id, (err, user)=>{
+    if(err) return done(err)
+    done(null, user)
+  })
+})
+//setup express session, this is needed by passport to function properly
+app.use(
+  session({
+    secret: "secretcode" /*replace this with a better code later*/,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
-
-  connectToDatabase();
-
-
+app.use(cookieParser("secretcode"));
+//creates middleware that runs every time an HTTP request is made
+//if it finds a session it saves the user id internally
+app.use(passport.initialize());
+//runs deserialize and attaches the user property to req.user
+app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.redirect("/register")
+})
+//checks if the user exists in the database
+//if it does it sends an error message back to the client
+//if not it hashes the user's password builds a user object and saves it to the database
+//after saving the user a message with redirect information is sent back to the client
+app.post("/register", (req, res, next)=>{
+  User.findOne({username:req.body.username}, async(err, user)=>{
+    if(user) {
+      res.json({error: true, message: "User already exists. Try another username"})
+    }
+    else{
+      const hashedPassword = await bcrypt.hash(req.body.password, 10)
+      const newUser = new User({
+        username:req.body.username,
+        password: hashedPassword,
+        email: req.body.email
+      })
+      await newUser.save()
+      res.json({redirectTo: "login"})
+    }
+  })
+  console.log(req.body)
 })
 
 app.listen(port, () => {

@@ -14,8 +14,8 @@ function App() {
   if(screen==="signup"){
     return (
     <div className="container">
-      <Signup />
-      <button onClick={()=>toggleScreen("login")}className="btn-nav">Login</button>
+      <Signup redirect={setScreen}/>
+      <button onClick={()=>toggleScreen("login")} className="btn-nav">Login</button>
     </div>
   );
   }else if(screen==="login"){

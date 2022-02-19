@@ -103,6 +103,41 @@ app.post("/register", (req, res, next)=>{
   console.log(req.body)
 })
 
+//login route
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) throw err;
+    if (!user) res.send("No User Exists");
+    else {
+      req.logIn(user, (err) => {
+        if (err) throw err;
+        res.json(req.user)
+        console.log(req);
+      });
+    }
+  })(req, res, next);
+});
+//test route to test if authentication is done automatically when user is logged in
+
+app.get("/protected", (req, res)=>{
+  //passport retrieves and saves the user object in req.user after login
+  //after logout the user object is erased and becomes null
+  //Checking if user is null tells us if a valid session exists or not 
+  if(req.user){
+    console.log(req.user)
+    res.send("Successful authenticaion")
+  }else{
+    res.send("access forbidden")
+  }
+  
+})
+
+app.post("/logout", (req, res)=>{
+  req.logout()
+  console.log("user ",req.user)
+  res.send("Success")
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)})
 

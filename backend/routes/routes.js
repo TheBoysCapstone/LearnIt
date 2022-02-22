@@ -32,10 +32,12 @@ router.get('/', (req, res) => {
     console.log(req.body)
   })
   
-  
+
+
+ 
 //login route
 router.post("/login", passport.authenticate('local',{failureRedirect: "/failed-login"}), (req, res)=>{
-    res.json(req.user)
+    res.json({user: req.user, redirectTo: 'user'})
 })
 
 //will fire when login fails

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
+import axios from 'axios'
 
-const Login = () =>{
+const Login = ({setRedirect, setUser}) =>{
     const[loginInfo, setLoginInfo] = useState({username:'', password: ''})
     const[warning, setWarning] = useState('');
 
@@ -10,7 +11,30 @@ const Login = () =>{
 
         if(loginInfo.username && loginInfo.password){
             //code that sends loginInfo to the server goes here
-
+            axios({
+                method: "POST",
+                //data to send to server in the form of an object
+                data: {
+                  username: loginInfo.username,
+                  password: loginInfo.password,
+                },
+                withCredentials: true,
+                //address of the express server
+                url: "http://localhost:8080/login",
+              })
+              //this executes after the server responds
+              .then((res) => {
+                  //res.data.error is true when a user with the specified username already exists; console.log(res.data) for more details
+                  if(!res.data.user){
+                      //passing the error message into the setWarning function will tell the user to try another username
+                      setRedirect("loginerror")
+                      //this will execute if there were no errors
+                  }else{
+                      //redirect to login page
+                      setUser(res.data.user)
+                      setRedirect(res.data.redirectTo)
+                  }
+              });
             setLoginInfo({username:'', password: ''})
         }else{
             setWarning("All fields need to be completed")

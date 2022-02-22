@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import axios from 'axios'
 
 
-const Signup = ({redirect/*redirect is a function from the App.js file which takes in the name of the screen to redirect to as its parameter*/}) =>{
+const Signup = ({setRedirect/*redirect is a function from the App.js file which takes in the name of the screen to redirect to as its parameter*/}) =>{
     const[signupInfo, setSignupInfo]=useState({username:'', email:'', password:''})
     const[warning, setWarning] = useState("");
 
@@ -49,7 +49,7 @@ const Signup = ({redirect/*redirect is a function from the App.js file which tak
                   }else{
                       //redirect to login page
                       console.log(res.data.redirectTo)
-                      redirect(res.data.redirectTo)
+                      setRedirect(res.data.redirectTo)
                   }
               });
 

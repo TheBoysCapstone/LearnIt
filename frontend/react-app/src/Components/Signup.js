@@ -48,6 +48,7 @@ const Signup = ({redirect/*redirect is a function from the App.js file which tak
                       //this will execute if there were no errors
                   }else{
                       //redirect to login page
+                      console.log(res.data.redirectTo)
                       redirect(res.data.redirectTo)
                   }
               });

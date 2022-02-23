@@ -13,6 +13,7 @@ const port = 8080
 
 require("./database/database")
 const app = express()
+app.use(cookieParser("secretcode"));
 //setup the json data parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,14 +31,14 @@ app.use(
 app.use(
   session({
     secret: "secretcode" /*replace this with a better code later*/,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
   })
 );
 
 require("./middleware/authenticate")
 
-app.use(cookieParser("secretcode"));
+
 //creates middleware that runs every time an HTTP request is made
 //if it finds a session it saves the user id internally
 app.use(passport.initialize());

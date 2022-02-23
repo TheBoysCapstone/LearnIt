@@ -2,10 +2,17 @@ const router = require('express').Router();
 const passport = require('passport');
 const bcrypt = require("bcryptjs")
 const User = require('../models/user');
+const authorize = require("../middleware/authorize")
 
 
 router.get('/', (req, res) => {
-    res.json({redirectTo: "/register"})
+  if(req.user){
+    res.redirect(`/${req.user._id.toString()}`)
+  }
+  else{
+    res.json({success: true, redirectTo: "signup"})
+  }
+    
   })
 
 
@@ -45,19 +52,12 @@ router.get("/failed-login", (req, res)=>{
     res.json({success: false, message: "Username or password is incorrect"})
 })
 
-//test route to test if authentication is done automatically when user is logged in  
-router.get("/protected", (req, res)=>{
-    //passport retrieves and saves the user object in req.user after login
-    //after logout the user object is erased and becomes null
-    //Checking if user is null tells us if a valid session exists or not 
-    if(req.user){
-      console.log(req.user)
-      res.send("Successful authenticaion")
-    }else{
-      res.send("access forbidden")
-    }
-    
+// 
+router.get("/:id", authorize, (req, res)=>{
+      res.json({success: true, user: req.user, redirectTo:"user"})
   })
+
+
   //this will remove all users in the users collection(for debugging purposes)
   router.post("/deleteall", (req, res)=>{
       User.remove((err)=>{
@@ -67,11 +67,10 @@ router.get("/protected", (req, res)=>{
                 res.json({success: true, message: "all users removed"})
       })
   })
-  
-router.post("/logout", (req, res)=>{
+//logs out user; make sure the right user is trying to logout
+router.post("/:id/logout",authorize, (req, res)=>{
     req.logout()
-    console.log("user ",req.user)
-    res.send("Success")
+    res.json({success: true})
   })
 
   module.exports = router

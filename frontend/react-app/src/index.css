@@ -39,7 +39,8 @@
   background-color: #de474a;
 }
 
-.btn-login {
+.btn-login, 
+.btn-logout {
   background-color: #3589e8;
 }
 

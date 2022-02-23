@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import axios from 'axios'
 import Login from "./Components/Login.js"
 import Signup from "./Components/Signup.js"
 import User from "./Components/User.js"
@@ -7,6 +8,21 @@ import User from "./Components/User.js"
 function App() {
   const[screen, setScreen] = useState("signup")
   const[user, setUser] = useState()
+
+  //fires when the component is loaded
+  useEffect(()=>{
+    axios({
+      method: "GET",
+      withCredentials: true,
+      //address of the express server
+      url: "http://localhost:8080/",
+    })
+    .then((res)=>{
+      if(res.data.user) setUser(res.data.user)
+      setScreen(res.data.redirectTo)
+      console.log(res.data) 
+    })
+  }, [])
 
   const toggleScreen = (value) => {
     //console.log(value)
@@ -31,7 +47,7 @@ function App() {
   else if(screen==="user"){
     return (
    <div className="container">
-     <User user={user}/>
+     <User user={user} setRedirect={setScreen} setUser={setUser}/>
    </div>
     );
  }else if(screen==="loginerror"){

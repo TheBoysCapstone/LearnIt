@@ -39,6 +39,18 @@
   background-color: #de474a;
 }
 
-.btn-login {
+.btn-login, 
+.btn-logout {
   background-color: #3589e8;
+}
+
+.btn-nav {
+  border-color: transparent;
+  background-color: transparent;
+  color: #3589e8;
+  font-size: large;
+}
+
+.warning {
+  color: red;
 }

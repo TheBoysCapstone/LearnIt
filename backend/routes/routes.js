@@ -3,6 +3,7 @@ const passport = require('passport');
 const bcrypt = require("bcryptjs")
 const User = require('../models/user');
 const authorize = require("../middleware/authorize")
+const joi = require("joi")
 
 
 router.get('/', (req, res) => {
@@ -25,8 +26,23 @@ router.get('/', (req, res) => {
       if(user) {
         res.json({error: true, message: "User already exists. Try another username"})
       }
+      else if(req.body.password.length < 6){
+        res.json({error: true, message: "Password must be 6 characters"})
+      }
+      else if(req.body.password.length > 16){
+        res.json({error: true, message: "Password is too long"})
+      }
+      else if(req.body.password.search(/[a-z]/) < 0){
+        res.json({error: true, message: "Password must contain a lowercase leter"})
+      }
+      else if(req.body.password.search(/[A-Z]/) < 0){
+        res.json({error: true, message: "Password must contain a uppercase letter"})
+      }
+      else if(req.body.password.search(/[0-9]/) < 0){
+        res.json({error: true, message: "Password must contain a number"})
+      }
       else{
-        const hashedPassword = await bcrypt.hash(req.body.password, 12)
+        const hashedPassword = await bcrypt.hash(req.body.password, 11)
         const newUser = new User({
           username:req.body.username,
           password: hashedPassword,

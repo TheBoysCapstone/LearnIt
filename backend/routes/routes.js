@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
         res.json({error: true, message: "User already exists. Try another username"})
       }
       else{
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const hashedPassword = await bcrypt.hash(req.body.password, 12)
         const newUser = new User({
           username:req.body.username,
           password: hashedPassword,

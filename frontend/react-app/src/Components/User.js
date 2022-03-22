@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const User = ({user, setRedirect, setUser}) =>{
     
-    const handleSubmit = () => {
+    const handleLogout = () => {
         axios({
             method: "POST",
             data:{},
@@ -18,11 +18,17 @@ const User = ({user, setRedirect, setUser}) =>{
 
         })
     }
+
+
+    const handleCreateCourse = () => {
+        console.log("This will take user to create course page")
+    }
     return(
         <>
             <h2>Hi {user.username}. You are logged in</h2>
             <h2>{user.email}</h2>
-            <button onClick={handleSubmit} className="btn btn-logout">Logout</button>
+            <button onClick={handleLogout} className="btn btn-logout">Logout</button>
+            <button onClick={handleCreateCourse} className="btn btn-create">Create Course</button>
         </>
     )
 }

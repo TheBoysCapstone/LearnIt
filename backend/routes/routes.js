@@ -3,7 +3,6 @@ const passport = require('passport');
 const bcrypt = require("bcryptjs")
 const User = require('../models/user');
 const authorize = require("../middleware/authorize")
-const joi = require("joi")
 
 
 router.get('/', (req, res) => {

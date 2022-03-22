@@ -21,7 +21,7 @@ const User = ({user, setRedirect, setUser}) =>{
 
 
     const handleCreateCourse = () => {
-        console.log("This will take user to create course page")
+        setRedirect("create-course")    
     }
     return(
         <>

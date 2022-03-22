@@ -72,6 +72,12 @@ router.get("/:id", authorize, (req, res)=>{
       res.json({success: true, user: req.user, redirectTo:"user"})
   })
 
+//this will save the course into the database
+router.post("/:id/create-course", (req,res)=>{
+    console.log("this will create a new course in the database")
+    res.json({success: true})
+})
+
 
   //this will remove all users in the users collection(for debugging purposes)
   router.post("/deleteall", (req, res)=>{
@@ -82,7 +88,7 @@ router.get("/:id", authorize, (req, res)=>{
                 res.json({success: true, message: "all users removed"})
       })
   })
-//logs out user; make sure the right user is trying to logout
+//logs out user; makes sure the right user is trying to logout
 router.post("/:id/logout",authorize, (req, res)=>{
     req.logout()
     res.json({success: true})

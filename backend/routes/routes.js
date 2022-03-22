@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const passport = require('passport');
 const bcrypt = require("bcryptjs")
+const mongoose = require("mongoose");
 const User = require('../models/user');
+const Course = require('../models/course')
+const Question = require('../models/question'); 
 const authorize = require("../middleware/authorize")
 
 
@@ -72,9 +75,30 @@ router.get("/:id", authorize, (req, res)=>{
       res.json({success: true, user: req.user, redirectTo:"user"})
   })
 
-//this will save the course into the database
-router.post("/:id/create-course", (req,res)=>{
-    console.log("this will create a new course in the database")
+//this will save the course and questions into the database
+router.post("/:id/create-course", async (req,res)=>{
+
+    const newCourse = new Course({
+        title: req.body.title,
+        body: req.body.content,
+        userID: mongoose.Types.ObjectId(req.params.id),
+    })
+    const result = await newCourse.save();
+    //if question was successfully saved and there are questions associated with the course
+    //the questions will be saved in the questions collection of the database
+    if(await result && req.body.questions.length !== 0){
+
+        req.body.questions.forEach((question => {
+            const newQuestion = new Question({
+                question: question.content,
+                isCorrect: question.isCorrect,
+                courseID : result._id
+            })
+            newQuestion.save();
+        }))
+
+        }
+    
     res.json({success: true})
 })
 

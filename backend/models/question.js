@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const question = new mongoose.Schema({
     question: String,
-    isCorrect: Boolean,
+    answers: [{answer: String, isCorrect: Boolean}],
     courseID: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
 },
 {collection: 'questions'})

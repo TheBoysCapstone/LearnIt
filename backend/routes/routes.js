@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 const User = require('../models/user');
 const Course = require('../models/course')
 const Question = require('../models/question'); 
-const authorize = require("../middleware/authorize")
+const authorize = require("../middleware/authorize");
+const question = require('../models/question');
 
 
 router.get('/', (req, res) => {
@@ -86,17 +87,16 @@ router.post("/:id/create-course", async (req,res)=>{
     const result = await newCourse.save();
     //if question was successfully saved and there are questions associated with the course
     //the questions will be saved in the questions collection of the database
-    if(await result && req.body.questions.length !== 0){
+    if(await result && req.body.question){
 
-        req.body.questions.forEach((question => {
             const newQuestion = new Question({
-                question: question.content,
-                isCorrect: question.isCorrect,
+                question: req.body.question,
+                answers: req.body.answers,
                 courseID : result._id
             })
-            newQuestion.save();
-        }))
-
+            const rs = await newQuestion.save();
+            console.log(await rs)
+    
         }
     
     res.json({success: true})

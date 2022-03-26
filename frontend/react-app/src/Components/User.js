@@ -25,7 +25,7 @@ const User = ({user, setRedirect, setUser}) =>{
 
     if(showCourseForm){
         return(
-            <CourseForm />
+            <CourseForm user = {user}/>
         )
     }
     else{
@@ -42,42 +42,87 @@ const User = ({user, setRedirect, setUser}) =>{
 }
 
 
-const CourseForm = () => {
-    const[question, setQuestion] = useState("")
-    const[answers, setAnswers] = useState([{content: "", isCorrect: false}])
+const CourseForm = ({user}) => {
+    
+
+    const[course, setCourse] = useState({title:"", topic: "", content: "", question: ""})
+    const [answers, setAnswers] = useState([{answer: "", isCorrect: false}])
 
     const handleSubmit = () => {
+        let payload = course
+        payload.answers = answers
+        axios({
+            method: "POST",
+            data:{...payload},
+            url:`http://localhost:8080/${user._id}/create-course`,
+            withCredentials: true,
+        })
+        .then((res)=>{
+            if(res.data && res.data.success){
+                //TODO: implement redirect 
+                console.log(res.data)
+            }
+                
 
+        })
+    }
+
+    const handleCourseChange = (e) => {
+        const[field, value] = [e.target.name, e.target.value]
+        
+            setCourse({...course, [field]: value})
+            
+        //console.log(course)
+    }
+
+    const handleAnswersChange = (e, index) => {
+        //console.log(e)
+        const field = e.target.name
+        let temp = answers;
+    
+        if(field==="isCorrect"){
+           let isCorrect = e.target.checked
+           temp[index][field] = isCorrect;
+        }
+        else{
+            const value = e.target.value
+            temp[index][field] = value;
+        }
+        
+        
+        
+        setAnswers([...temp])
+        console.log(answers)
     }
 
     const addAnswerField = () => {
-        setAnswers([...answers, {content: "", isCorrect: false}])
+        setAnswers([...answers, {answer: "", isCorrect: false}])
     }
     return (
         <div>
             <div>
                 <label htmlFor="title">Title</label>
-                <input type='text' name='title'/>
+                <input type='text' name='title' value={course.title} onChange={handleCourseChange}/>
             </div>
             <div>
                 <label htmlFor="topic">Topic</label>
-                <input type='text' name='topic'/>
+                <input type='text' name='topic' value={course.topic} onChange={handleCourseChange}/>
             </div>
             <div>
                 <label htmlFor="content">Course Content</label>
-                <textarea name="content" ></textarea>
+                <textarea name="content" value={course.content}  onChange={handleCourseChange}></textarea>
             </div>
             <div>
                 <label htmlFor="question">Question</label>
-                <input type='text' name='question'/>
+                <input type='text' name='question' value={course.question}  onChange={handleCourseChange}/>
             </div>
             
             {
                 
                 answers.map((answer, index)=> 
-                    <div>
-                        <input type='text' name='answer' placeholder='answer'/>
-                        <input type='checkbox' name='correct'/>
+                    <div key={index}>
+                        <input type='text' name='answer' placeholder='answer' onChange={(e)=>handleAnswersChange(e, index)}/>
+                        <input type='checkbox' name='isCorrect'  onChange={(e)=>handleAnswersChange(e, index)}/>
                         <button onClick={addAnswerField}>add</button>
                     </div>)
             }

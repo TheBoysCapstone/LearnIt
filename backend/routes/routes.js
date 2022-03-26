@@ -77,29 +77,39 @@ router.get("/:id", authorize, (req, res)=>{
   })
 
 //this will save the course and questions into the database
-router.post("/:id/create-course", async (req,res)=>{
-
+router.post("/:id/create-course", authorize, async (req,res)=>{
     const newCourse = new Course({
         title: req.body.title,
+        topic: req.body. topic,
         body: req.body.content,
         userID: mongoose.Types.ObjectId(req.params.id),
     })
-    const result = await newCourse.save();
+    
+    let questionResult, courseResult;
+    courseResult = await newCourse.save();
     //if question was successfully saved and there are questions associated with the course
     //the questions will be saved in the questions collection of the database
-    if(await result && req.body.question){
+    if(await courseResult && req.body.question){
 
             const newQuestion = new Question({
                 question: req.body.question,
                 answers: req.body.answers,
-                courseID : result._id
+                courseID : courseResult._id
             })
-            const rs = await newQuestion.save();
-            console.log(await rs)
+            questionResult = await newQuestion.save();
+            //if questionResult and courseResult are not null save was successful
+            if(courseResult && questionResult)
+                //return success message
+                res.json({success: true})
+            else{
+                //if errors happened send error status to client
+                res.json({error: true, message: "Could not save the course..."})
+            }
     
         }
+
+
     
-    res.json({success: true})
 })
 
 

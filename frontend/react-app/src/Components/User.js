@@ -51,6 +51,7 @@ const CourseForm = ({user}) => {
     const handleSubmit = () => {
         let payload = course
         payload.answers = answers
+        console.log(payload)
         axios({
             method: "POST",
             data:{...payload},
@@ -72,7 +73,7 @@ const CourseForm = ({user}) => {
         
             setCourse({...course, [field]: value})
             
-        //console.log(course)
+        console.log(course)
     }
 
     const handleAnswersChange = (e, index) => {
@@ -98,6 +99,13 @@ const CourseForm = ({user}) => {
     const addAnswerField = () => {
         setAnswers([...answers, {answer: "", isCorrect: false}])
     }
+
+    const removeAnswerField = (e, index) => {
+        let ansArr = answers;
+        ansArr.splice(index, 1)
+        setAnswers([...ansArr])
+        console.log(answers)
+    }
     return (
         <div>
             <div>
@@ -105,8 +113,19 @@ const CourseForm = ({user}) => {
                 <input type='text' name='title' value={course.title} onChange={handleCourseChange}/>
             </div>
             <div>
-                <label htmlFor="topic">Topic</label>
-                <input type='text' name='topic' value={course.topic} onChange={handleCourseChange}/>
+            <div>
+                <label htmlFor="topics">Topics</label>
+                <select name="topics" onChange={handleCourseChange}>
+                    <option value="default">Choose topic</option>
+                    <option value="it/software">IT/Software</option>
+                    <option value="business">Business</option>
+                    <option value="management">Management</option>
+                    <option value="science">Science</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="other">other</option>    
+                </select>
+            </div>
+            
             </div>
             <div>
                 <label htmlFor="content">Course Content</label>
@@ -121,11 +140,12 @@ const CourseForm = ({user}) => {
                 
                 answers.map((answer, index)=> 
                     <div key={index}>
-                        <input type='text' name='answer' placeholder='answer' onChange={(e)=>handleAnswersChange(e, index)}/>
+                        <input type='text' name='answer' placeholder='answer' value={answers[index].answer} onChange={(e)=>handleAnswersChange(e, index)}/>
                         <input type='checkbox' name='isCorrect'  onChange={(e)=>handleAnswersChange(e, index)}/>
-                        <button onClick={addAnswerField}>add</button>
+                        <button onClick={(e)=>removeAnswerField(e, index)}>remove</button>
                     </div>)
             }
+            <button onClick={addAnswerField}>add</button>
             <button onClick={handleSubmit} className="btn btn-create">Submit Course</button>
         </div>
         

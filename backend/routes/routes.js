@@ -13,7 +13,13 @@ const limitter = require('express-rate-limit')
 const registerLimitter = limitter({
   windowMs: 5 * 60 * 1000, //A client can register 2 accounts every 5 minutes
   max: 2,
-  message: 'To many registation attempts, try again later',
+  message: 'Too many registation attempts, try again later.',
+})
+
+const loginLimitter = limitter({
+  windowMS: 2 * 60 * 1000, //A client can attempt to login 5 times every two minutes 
+  max: 5,
+  message: 'Too many login attempts, try again later.',
 })
 
 
@@ -71,15 +77,15 @@ router.get('/', (req, res) => {
 
  
 //login route
-router.post("/login", passport.authenticate('local',{failureRedirect: "/failed-login"}), (req, res)=>{
+router.post("/login", loginLimitter, passport.authenticate('local',{failureRedirect: "/failed-login"}), (req, res)=>{
     res.json({user: req.user, redirectTo: 'user'})
-    logger.warning(`[User: ${req.user.username}] [IP: ${req.socket.remoteAddress}] [Message: Successful Login]`)
+    logger.warning(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: Successful Login]`)
 })
 
 //will fire when login fails
 router.get("/failed-login", (req, res)=>{
     res.json({success: false, message: "Username or password is incorrect"})
-    logger.warning(`[User: ${req.user.username}] [IP: ${req.socket.remoteAddress}] [Message: Failed Login]`)
+    logger.warning(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: Failed Login]`)
 })
 
 // 

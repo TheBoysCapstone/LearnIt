@@ -8,6 +8,13 @@ const Question = require('../models/question');
 const authorize = require("../middleware/authorize");
 const question = require('../models/question');
 const logger = require('../logger/dev-logger')
+const limitter = require('express-rate-limit')
+
+const registerLimitter = limitter({
+  windowMs: 5 * 60 * 1000, //A client can register 2 accounts every 5 minutes
+  max: 2,
+  message: 'To many registation attempts, try again later',
+})
 
 
 router.get('/', (req, res) => {
@@ -25,7 +32,7 @@ router.get('/', (req, res) => {
   //if it does it sends an error message back to the client
   //if not it hashes the user's password, builds a user object and saves it to the database
   //after saving the user a message with redirect information is sent back to the client
-  router.post("/register", (req, res, next)=>{
+  router.post("/register", registerLimitter,(req, res, next)=>{
     User.findOne({username:req.body.username}, async(err, user)=>{
       if(user) {
         res.json({error: true, message: "User already exists. Try another username"})

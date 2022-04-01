@@ -7,6 +7,7 @@ const Course = require('../models/course')
 const Question = require('../models/question'); 
 const authorize = require("../middleware/authorize");
 const question = require('../models/question');
+const logger = require('../logger/dev-logger')
 
 
 router.get('/', (req, res) => {
@@ -64,11 +65,13 @@ router.get('/', (req, res) => {
 //login route
 router.post("/login", passport.authenticate('local',{failureRedirect: "/failed-login"}), (req, res)=>{
     res.json({user: req.user, redirectTo: 'user'})
+    logger.warning(`[User: ${req.user.username}] [IP: ${req.socket.remoteAddress}] [Message: Successful Login]`)
 })
 
 //will fire when login fails
 router.get("/failed-login", (req, res)=>{
     res.json({success: false, message: "Username or password is incorrect"})
+    logger.warning(`[User: ${req.user.username}] [IP: ${req.socket.remoteAddress}] [Message: Failed Login]`)
 })
 
 // 

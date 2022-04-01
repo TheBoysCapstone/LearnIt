@@ -53,6 +53,7 @@ router.get('/', (req, res) => {
           email: req.body.email
         })
         await newUser.save()
+        logger.info(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: New User Created]}`)
         res.json({success : true ,redirectTo: "login"})
       }
     })

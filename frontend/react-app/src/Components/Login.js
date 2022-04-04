@@ -49,7 +49,7 @@ const Login = ({setRedirect, setUser}) =>{
     return(
         <>
             <h4>Login to continue</h4>
-            <form className="form">
+            <form>
                 <div>
                     <h4 className="warning">{warning}</h4>
                 </div>
@@ -61,7 +61,7 @@ const Login = ({setRedirect, setUser}) =>{
                     <label htmlFor="password">Password</label>
                     <input type='password' id='password' name='password' size="30" value={loginInfo.password} onChange={handleChange}/>
                 </div>
-                <button type="submit" className="btn btn-login" onClick={handleSubmit}>Login</button>
+                <button type="submit" className="green-btn group-btn" onClick={handleSubmit}>Login</button>
             </form>
             
             

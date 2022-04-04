@@ -62,7 +62,7 @@ const Signup = ({setRedirect/*redirect is a function from the App.js file which 
     return(
         <>
             <h4>Create an account</h4>
-            <form className="form">
+            <form>
                 <div>
                     <h4 className="warning">{warning}</h4>
                 </div>
@@ -78,7 +78,7 @@ const Signup = ({setRedirect/*redirect is a function from the App.js file which 
                     <label htmlFor="password">Password</label>
                     <input type='password' id='password' name='password' size="30" value={signupInfo.password} onChange={handleChange}/>
                 </div>
-                <button type="submit" className="btn btn-signup"  onClick={handleSubmit}>Register</button>
+                <button type="submit" className="green-btn group-btn"  onClick={handleSubmit}>Register</button>
             </form>
             
             

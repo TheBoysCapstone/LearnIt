@@ -1,58 +1,108 @@
-.container {
-  margin: auto;
-  text-align: center;
+body {font-family: Arial, Helvetica, sans-serif;}
+
+.sidenav {
+  float: left;
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 20%; /* Set the width of the sidebar */
+ /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 30;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
 }
 
-.form {
-  max-width: 40vw;
-  margin: auto;
-  padding: 50px 0;
-  border-style: solid;
-  border-color: #d6c7c8;
-  border-width: 1px;
-  border-radius: 5px;
-}
-
-.form label {
+.sidenav li {
+  color: #2196F3;
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 24px;
+  cursor: pointer;
   display: block;
 }
 
-.form input {
-  border-radius: 5px;
-  border-color: #d6c7c8;
-  border-style: solid;
-  margin: 5px;
-  padding: 10px;
+.active {
+  border-left-width: 2px;
+  border-color: #2196F3;
 }
 
-.btn {
-  border-radius: 5px;
-  border-color: transparent;
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+
+/* Style inputs with type="text", select elements and textareas */
+input, select, textarea {
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+  
+}
+
+/* Style the submit button with a specific background color etc */
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* When moving the mouse over the submit button, add a darker green color */
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+/* Set a style for all buttons */
+button {
   color: white;
-  font-size: large;
-  margin: 5px;
-  padding: 10px;
-  width: 255px;
+  padding: 20px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
 }
 
-.btn-signup {
-  background-color: #de474a;
+button:hover {
+  opacity:1;
 }
 
-.btn-login, 
-.btn-logout {
-  background-color: #3589e8;
-}
-.btn-create{
-  background-color: #0db840;
-}
-.btn-nav {
-  border-color: transparent;
-  background-color: transparent;
-  color: #3589e8;
-  font-size: large;
+/* Extra styles for the cancel button */
+.red-btn {
+  background-color: #f44336;
 }
 
-.warning {
-  color: red;
+.green-btn{
+  background-color: #04AA6D;
 }
+
+.blue-btn {
+  background-color: #2196F3;
+}
+
+/* Float cancel and signup buttons and add an equal width */
+.group-btn {
+  float: left;
+  width: 50%;
+}
+
+
+/* Add a background color and some padding around the form */
+.container {
+  max-width: 40%;
+  border-radius: 5px;
+  padding: 20px;
+  margin: auto;
+ 
+}
+
+.answer-form{
+  display: flex;
+  align-items:center;
+}
+
+
+

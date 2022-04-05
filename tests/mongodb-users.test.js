@@ -30,8 +30,6 @@ describe('insert', () => {
         await users.insertOne(mockUser);
 
         const insertedUser = await users.findOne({username: 'mock'});
-        console.log(insertedUser);
-        console.log(mockUser);
         expect(mockUser).toEqual(insertedUser);
     });
 });

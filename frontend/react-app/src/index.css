@@ -67,10 +67,12 @@ h3 {
 .sidenav small{
   display: block;
   font-size: 11px;
+  pointer-events: none;
 }
 .sidenav strong{
   display: block;
   text-transform: uppercase;
+  pointer-events: none;
 }
 
 .active {

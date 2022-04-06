@@ -190,16 +190,18 @@ const Menu = ({ handler }) => {
 
     const[activeId, setActiveId] = useState(0);
     const handleClick = (e, id) => {
-        console.log("clicked")
+        e.stopPropagation()
+    
         setActiveId(id);
-        handler(e.target.innerHTML);
+
+        handler(e.target.getAttribute("data-location"));
   };
   return (
       <div className="sidenav">
         <ul>
             {
                 menuItems.map((value, index)=>
-                    <li  key={index} onClick={(e) => handleClick(e, index)} className={index===activeId ? "active" : ""}><strong>{value.title}</strong><small>{value.subtitle}</small></li>
+                    <div key={index} onClick={(e) => handleClick(e, index)}><li className={index===activeId ? "active" : ""} data-location={value.title}><strong>{value.title}</strong><small>{value.subtitle}</small></li></div>
                 )
               
             }

@@ -1,24 +1,56 @@
-body {font-family: Arial, Helvetica, sans-serif;}
+html{
+  @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+  height: 80%
+}
+body {font-family: Arial, Helvetica, sans-serif; margin: 0; height: 100%;}
+
+#root {
+  height: 100%;
+}
+
+.logo{
+  margin: 0;
+  background-color: #04AA6D;
+}
+
+.logo p{
+  margin: 0;
+  font-size: 50px;
+  color: #fff;
+  padding-left: 30px;
+  font-family: 'Lobster', cursive;
+}
 
 .sidenav {
   float: left;
-  height: 100%; /* Full-height: remove this if you want "auto" height */
+  height: 100%;/* Full-height: remove this if you want "auto" height */
   width: 20%; /* Set the width of the sidebar */
  /* Fixed Sidebar (stay in place on scroll) */
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
-  left: 30;
+  margin-left: 5%;
+  margin-top: 20px;
+  margin-bottom: 20%;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 20px;
+  background-color: #f7f8fa;
 }
 
 .sidenav li {
-  color: #2196F3;
-  padding: 6px 8px 20px 16px;
-  text-decoration: none;
-  font-size: 24px;
-  cursor: pointer;
   display: block;
+  text-decoration: none;
+  padding: 12px 20px;
+  color: #777;
+  /* text-align: center;
+  border-right: 1px solid #E7E7E7; */
+  
+  /* == */
+  text-align: left;
+  height: 36px;
+  position: relative;
+  border-bottom: 1px solid #EEE;
+  cursor: pointer;
+  /* == */
 }
 
 .active {
@@ -26,10 +58,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
   border-color: #2196F3;
 }
 
-hr {
-  border: 1px solid #f1f1f1;
-  margin-bottom: 25px;
-}
 
 
 /* Style inputs with type="text", select elements and textareas */

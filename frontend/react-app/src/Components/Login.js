@@ -47,7 +47,7 @@ const Login = ({setRedirect, setUser}) =>{
         setLoginInfo({...loginInfo, [field]: value})
     }
     return(
-        <>
+        <div className="container">
             <h4>Login to continue</h4>
             <form>
                 <div>
@@ -62,10 +62,9 @@ const Login = ({setRedirect, setUser}) =>{
                     <input type='password' id='password' name='password' size="30" value={loginInfo.password} onChange={handleChange}/>
                 </div>
                 <button type="submit" className="green-btn group-btn" onClick={handleSubmit}>Login</button>
+                <button onClick={() => setRedirect("signup")} className="red-btn group-btn">Signup</button>
             </form>
-            
-            
-        </>
+        </div>
     )
 }
 

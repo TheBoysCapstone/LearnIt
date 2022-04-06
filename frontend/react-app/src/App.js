@@ -3,6 +3,7 @@ import axios from "axios";
 import Login from "./Components/Login.js";
 import Signup from "./Components/Signup.js";
 import User from "./Components/User.js";
+import Logo from "./Component/logo.js"
 
 function App() {
   const [screen, setScreen] = useState("signup");
@@ -22,34 +23,29 @@ function App() {
     });
   }, []);
 
-  const toggleScreen = (value) => {
-    //console.log(value)
-    setScreen(value);
-  };
 
   if (screen === "signup") {
     return (
-      <div className="container signup-form">
+      <>
+        <Logo />
         <Signup setRedirect={setScreen} />
-        <button onClick={() => toggleScreen("login")} className="red-btn group-btn">
-          Login
-        </button>
-      </div>
+      </>
     );
   } else if (screen === "login") {
     return (
-      <div className="container login-form">
-        <Login setRedirect={setScreen} setUser={setUser} />
-        <button onClick={() => toggleScreen("signup")} className="red-btn group-btn">
-          Signup
-        </button>
-      </div>
+        <>
+          <Logo />
+          <Login setRedirect={setScreen} setUser={setUser} />
+        </>
     );
   } else if (screen === "user") {
     return (
-      <div>
-        <User user={user} setRedirect={setScreen} setUser={setUser} />
-      </div>
+        <>
+          <Logo />
+          <User user={user} setRedirect={setScreen} setUser={setUser} />
+        </>
+        
+
     );
   } else if (screen === "loginerror") {
     return (

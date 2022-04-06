@@ -22,13 +22,14 @@ const User = ({ user, setRedirect, setUser }) => {
     }
   },[component])
 
+
   if (component === "New Course") {
     console.log("Hello");
     return (
-      <div>
+      <>
         <Menu handler={setComponent} />
         <CourseForm user={user} />
-      </div>
+      </>
     );
   } else {
     return (
@@ -181,7 +182,6 @@ const Menu = ({ handler }) => {
     handler(e.target.innerHTML);
   };
   return (
-    <div>
       <div className="sidenav">
         <ul onClick={(e) => handleClick(e)}>
           <li>Main</li>
@@ -191,8 +191,8 @@ const Menu = ({ handler }) => {
           <li>Logout</li>
         </ul>
       </div>
-    </div>
   );
 };
+
 
 export default User;

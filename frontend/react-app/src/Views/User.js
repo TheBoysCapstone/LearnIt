@@ -190,6 +190,7 @@ const Menu = ({ handler }) => {
 
     const[activeId, setActiveId] = useState(0);
     const handleClick = (e, id) => {
+        console.log("clicked")
         setActiveId(id);
         handler(e.target.innerHTML);
   };

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Login from "./Components/Login.js";
-import Signup from "./Components/Signup.js";
-import User from "./Components/User.js";
-import Logo from "./Component/logo.js"
+import Login from "./Views/Login.js";
+import Signup from "./Views/Signup.js";
+import User from "./Views/User.js";
+import Logo from "./Components/logo.js"
 
 function App() {
   const [screen, setScreen] = useState("signup");

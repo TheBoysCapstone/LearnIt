@@ -8,6 +8,10 @@ body {font-family: Arial, Helvetica, sans-serif; margin: 0; height: 100%;}
   height: 100%;
 }
 
+h3 {
+  text-align: center;
+}
+
 .logo{
   margin: 0;
   background-color: #04AA6D;
@@ -24,7 +28,7 @@ body {font-family: Arial, Helvetica, sans-serif; margin: 0; height: 100%;}
 .sidenav {
   float: left;
   height: 100%;/* Full-height: remove this if you want "auto" height */
-  width: 20%; /* Set the width of the sidebar */
+  width: 15%; /* Set the width of the sidebar */
  /* Fixed Sidebar (stay in place on scroll) */
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
@@ -36,10 +40,14 @@ body {font-family: Arial, Helvetica, sans-serif; margin: 0; height: 100%;}
   background-color: #f7f8fa;
 }
 
-.sidenav li {
+.sidenav ul {
+  padding: 0;
+}
+
+.sidenav ul li {
   display: block;
   text-decoration: none;
-  padding: 12px 20px;
+  padding: 20px 20px;
   color: #777;
   /* text-align: center;
   border-right: 1px solid #E7E7E7; */
@@ -52,10 +60,26 @@ body {font-family: Arial, Helvetica, sans-serif; margin: 0; height: 100%;}
   cursor: pointer;
   /* == */
 }
+.sidenav ul li:hover:not(.active){
+  background-color: #e2e3e4;
+}
+
+.sidenav small{
+  display: block;
+  font-size: 11px;
+}
+.sidenav strong{
+  display: block;
+  text-transform: uppercase;
+}
 
 .active {
-  border-left-width: 2px;
-  border-color: #2196F3;
+  background-color:rgb(189, 188, 188);
+  text-decoration: none;
+}
+
+.active small, .active strong{
+  color: #f7f8fa;
 }
 
 
@@ -97,7 +121,10 @@ button {
 button:hover {
   opacity:1;
 }
-
+.transparent-button {
+  background-color: #fff;
+  color: #f44336;
+}
 /* Extra styles for the cancel button */
 .red-btn {
   background-color: #f44336;

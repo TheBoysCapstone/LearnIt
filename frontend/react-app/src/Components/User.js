@@ -103,6 +103,7 @@ const CourseForm = ({ user }) => {
   };
   return (
     <div className="container">
+    <h3>Create a course</h3>
       <div>
         <label htmlFor="title">Title</label>
         <input
@@ -177,18 +178,31 @@ const CourseForm = ({ user }) => {
 };
 
 const Menu = ({ handler }) => {
-  const handleClick = (e) => {
-    e.target.className = "active"
-    handler(e.target.innerHTML);
+    const menuItems = [
+        {title: "Main", subtitle: "Your personal page"},
+        {title: "New Course", subtitle: "Teach others"},
+        {title: "Join Course", subtitle: "Start learning"},
+        {title: "Forum", subtitle: "Talk about it"},
+        {title: "Profile", subtitle: "Edit personal info"},
+        {title: "Logout", subtitle: "Take a break"},
+    
+    ]
+
+    const[activeId, setActiveId] = useState(0);
+    const handleClick = (e, id) => {
+        setActiveId(id);
+        handler(e.target.innerHTML);
   };
   return (
       <div className="sidenav">
-        <ul onClick={(e) => handleClick(e)}>
-          <li>Main</li>
-          <li>New Course</li>
-          <li>Join Course</li>
-          <li>Profile</li>
-          <li>Logout</li>
+        <ul>
+            {
+                menuItems.map((value, index)=>
+                    <li  key={index} onClick={(e) => handleClick(e, index)} className={index===activeId ? "active" : ""}><strong>{value.title}</strong><small>{value.subtitle}</small></li>
+                )
+              
+            }
+          
         </ul>
       </div>
   );

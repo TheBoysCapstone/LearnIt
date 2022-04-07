@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Categories from "../Components/course-categories.js";
 
 const User = ({ user, setRedirect, setUser }) => {
   const [component, setComponent] = useState("");
@@ -16,12 +17,11 @@ const User = ({ user, setRedirect, setUser }) => {
     });
   };
 
-  useEffect(()=>{
-    if(component==="Logout"){
-        handleLogout()
+  useEffect(() => {
+    if (component === "Logout") {
+      handleLogout();
     }
-  },[component])
-
+  }, [component]);
 
   if (component === "New Course") {
     console.log("Hello");
@@ -29,6 +29,13 @@ const User = ({ user, setRedirect, setUser }) => {
       <>
         <Menu handler={setComponent} />
         <CourseForm user={user} />
+      </>
+    );
+  } else if (component === "Join Course") {
+    return (
+      <>
+        <Menu handler={setComponent} />
+        <Categories handler={setComponent} />
       </>
     );
   } else {
@@ -102,8 +109,8 @@ const CourseForm = ({ user }) => {
     console.log(answers);
   };
   return (
-    <div className="container">
-    <h3>Create a course</h3>
+    <div className="container medium-width">
+      <h3>Create a course</h3>
       <div>
         <label htmlFor="title">Title</label>
         <input
@@ -178,38 +185,40 @@ const CourseForm = ({ user }) => {
 };
 
 const Menu = ({ handler }) => {
-    const menuItems = [
-        {title: "Main", subtitle: "Your personal page"},
-        {title: "New Course", subtitle: "Teach others"},
-        {title: "Join Course", subtitle: "Start learning"},
-        {title: "Forum", subtitle: "Talk about it"},
-        {title: "Profile", subtitle: "Edit personal info"},
-        {title: "Logout", subtitle: "Take a break"},
-    
-    ]
+  const menuItems = [
+    { title: "Main", subtitle: "Your personal page" },
+    { title: "New Course", subtitle: "Teach others" },
+    { title: "Join Course", subtitle: "Start learning" },
+    { title: "Forum", subtitle: "Talk about it" },
+    { title: "Profile", subtitle: "Edit personal info" },
+    { title: "Logout", subtitle: "Take a break" },
+  ];
 
-    const[activeId, setActiveId] = useState(0);
-    const handleClick = (e, id) => {
-        e.stopPropagation()
-    
-        setActiveId(id);
+  const [activeId, setActiveId] = useState(0);
+  const handleClick = (e, id) => {
+    e.stopPropagation();
 
-        handler(e.target.getAttribute("data-location"));
+    setActiveId(id);
+
+    handler(e.target.getAttribute("data-location"));
   };
   return (
-      <div className="sidenav">
-        <ul>
-            {
-                menuItems.map((value, index)=>
-                    <div key={index} onClick={(e) => handleClick(e, index)}><li className={index===activeId ? "active" : ""} data-location={value.title}><strong>{value.title}</strong><small>{value.subtitle}</small></li></div>
-                )
-              
-            }
-          
-        </ul>
-      </div>
+    <div className="sidenav">
+      <ul>
+        {menuItems.map((value, index) => (
+          <div key={index} onClick={(e) => handleClick(e, index)}>
+            <li
+              className={index === activeId ? "active" : ""}
+              data-location={value.title}
+            >
+              <strong>{value.title}</strong>
+              <small>{value.subtitle}</small>
+            </li>
+          </div>
+        ))}
+      </ul>
+    </div>
   );
 };
-
 
 export default User;

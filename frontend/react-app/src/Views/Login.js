@@ -47,7 +47,7 @@ const Login = ({setRedirect, setUser}) =>{
         setLoginInfo({...loginInfo, [field]: value})
     }
     return(
-        <div className="container">
+        <div className="container medium-width">
             <h3>Login to continue</h3>
             <form>
                 <div>

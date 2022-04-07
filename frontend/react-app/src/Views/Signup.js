@@ -60,7 +60,7 @@ const Signup = ({setRedirect/*redirect is a function from the App.js file which 
         }
     }
     return(
-        <div className="container">
+        <div className="container medium-width">
             <h3>Create an account</h3>
             <form>
                 <div>

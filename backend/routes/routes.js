@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const Course = require("../models/course");
 const Question = require("../models/question");
+const Video = require("../models/video");
 const authorize = require("../middleware/authorize");
-const question = require("../models/question");
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -87,24 +87,39 @@ router.post("/:id/create-course", authorize, async (req, res) => {
 
   let questionResult, courseResult;
   courseResult = await newCourse.save();
+
+  if(await !courseResult){
+      res.json({success: false, message: "Course could not be saved"})
+  }
   //if question was successfully saved and there are questions associated with the course
   //the questions will be saved in the questions collection of the database
-  if ((await courseResult) && req.body.question) {
-    const newQuestion = new Question({
-      question: req.body.question,
-      answers: req.body.answers,
+  if ((await courseResult) && req.body.questions) {
+    req.body.questions.forEach(async (question) => {
+      const newQuestion = new Question({
+        question: question.question,
+        answers: question.answers,
+        courseID: courseResult._id,
+      });
+
+      questionResult = await newQuestion.save();
+
+      if (await !questionResult) {
+        res.json({ success: false, message: "Course could not be saved" });
+      }
+    });
+  }
+  if (req.body.video) {
+    const newVideo = new Video({
+      video: req.body.video,
       courseID: courseResult._id,
     });
-    questionResult = await newQuestion.save();
-    //if questionResult and courseResult are not null save was successful
-    if (courseResult && questionResult)
-      //return success message
-      res.json({ success: true });
-    else {
-      //if errors happened send error status to client
-      res.json({ error: true, message: "Could not save the course..." });
+    const videoResult = await newVideo.save();
+
+    if (await !videoResult) {
+      res.json({ success: false, message: "Course could not be saved" });
     }
   }
+  res.json({ success: true });
 });
 
 //this will remove all users in the users collection(for debugging purposes)

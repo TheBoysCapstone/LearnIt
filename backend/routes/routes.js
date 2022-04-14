@@ -6,6 +6,7 @@ const User = require("../models/user");
 const Course = require("../models/course");
 const Question = require("../models/question");
 const Video = require("../models/video");
+const CompletedCourse = require("../models/completed-course.js");
 const authorize = require("../middleware/authorize");
 
 router.get("/", (req, res) => {
@@ -54,7 +55,6 @@ router.post("/register", (req, res, next) => {
       res.json({ success: true, redirectTo: "login" });
     }
   });
-  console.log(req.body);
 });
 
 //login route
@@ -76,13 +76,6 @@ router.get("/:id", authorize, (req, res) => {
 });
 
 router.get("/:id/get-courses/:category", authorize, (req, res) => {
-  console.log(
-    "Request received id:",
-    req.params.id,
-    " category: ",
-    req.params.category
-  );
-
   let _id = mongoose.Types.ObjectId(req.params.id);
 
   Course.find({ _id: { $ne: _id } })
@@ -94,21 +87,23 @@ router.get("/:id/get-courses/:category", authorize, (req, res) => {
 
 //
 router.get("/:id/get-course/:courseID", authorize, async (req, res) => {
-  Course.findOne({ _id: req.params.courseID }, (err, course)=>{
-      course.video=""
-      course.questions=[]
-      Question.find({ courseID: req.params.courseID }, (err, questions)=>{
-          Video.findOne({ courseID: req.params.courseID }, (err, video)=>{
-            course.questions = questions
-            course.video=video
-            res.json({success: true, course: course, questions: questions, video: video})
-          })
-      })
-  })
-  
-
+  Course.findOne({ _id: req.params.courseID }, (err, course) => {
+    course.video = "";
+    course.questions = [];
+    Question.find({ courseID: req.params.courseID }, (err, questions) => {
+      Video.findOne({ courseID: req.params.courseID }, (err, video) => {
+        course.questions = questions;
+        course.video = video;
+        res.json({
+          success: true,
+          course: course,
+          questions: questions,
+          video: video,
+        });
+      });
+    });
   });
-
+});
 
 //this will save the course and questions into the database
 router.post("/:id/create-course", authorize, async (req, res) => {
@@ -154,6 +149,35 @@ router.post("/:id/create-course", authorize, async (req, res) => {
     }
   }
   res.json({ success: true });
+});
+
+//save course to a collection of completed courses
+router.post("/:id/complete-course/:courseID", authorize, (req, res) => {
+  CompletedCourse.find(
+    { courseID: req.params.courseID },
+    async (err, result) => {
+      if (result.length === 0) {
+        const completedCourse = new CompletedCourse({
+          userID: req.params.id,
+          courseID: req.params.courseID,
+        });
+        const result = await completedCourse.save()
+        if (result){
+          console.log(error)
+          res.json({
+            success: false,
+            message: "Course completed",
+          });
+        }
+          
+        else res.json({ success: false, message: "Course status could not be updated" });
+      }
+    }
+  );
+  res.json({
+    success: false,
+    message: "Course already completed",
+  });
 });
 
 //this will remove all users in the users collection(for debugging purposes)

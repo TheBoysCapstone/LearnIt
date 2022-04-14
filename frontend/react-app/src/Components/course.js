@@ -44,17 +44,14 @@ const Course = ({ user, courseID }) => {
   const handleOnChangeCheckbox = (e, questionIndex, answerIndex) => {
     let ansArr = userAnswers;
     ansArr[questionIndex][answerIndex]["userAnswer"] = e.target.checked;
-    console.log(ansArr);
     setUserAnswers([...ansArr]);
   };
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
+
   const handleAnswerQuestion = (e, questionIndex) => {
     let answers = userAnswers[questionIndex];
-    
-    for(let i = 0; i<answers.length; i++) {
-      let answer = answers[i]
+
+    for (let i = 0; i < answers.length; i++) {
+      let answer = answers[i];
       if (answer.isCorrect === answer.userAnswer) {
         let msg = [];
         msg = messages;
@@ -69,12 +66,23 @@ const Course = ({ user, courseID }) => {
         setMessages([...msg]);
         return;
       }
-      console.log("hello")
     }
+  };
+
+  const handleCompleteCourse = () => { 
+    let url = `http://localhost:8080/${user._id}/complete-course/${courseID}`
+    console.log(url)
+    axios({
+      method: "POST",
+      url: url,
+      withCredentials: true,
+    }).then((res)=>{
+      console.log(res.data)
+    })
+  };
+  const handleAddToCourseInProgress = () => {
 
   }
-
-  const handleCompleteCourse = () => {};
 
   //check if object is empty
   if (Object.keys(course).length !== 0) {
@@ -88,8 +96,12 @@ const Course = ({ user, courseID }) => {
             <div key={questionIndex} className="question-form">
               {messages.length != 0 ? (
                 <div>
-                  <h4 className="green-text center-text">{messages[questionIndex]["correct"]}</h4>
-                  <h4 className="red-text center-text">{messages[questionIndex]["incorrect"]}</h4>
+                  <h4 className="green-text center-text">
+                    {messages[questionIndex]["correct"]}
+                  </h4>
+                  <h4 className="red-text center-text">
+                    {messages[questionIndex]["incorrect"]}
+                  </h4>
                 </div>
               ) : (
                 ""
@@ -115,7 +127,12 @@ const Course = ({ user, courseID }) => {
               </div>
             </div>
           ))}
-          <button className="green-btn">Complete Course</button>
+          <button className="green-btn" onClick={handleCompleteCourse}>
+            Complete Course
+          </button>
+          <button className="blue-btn" onClick={handleAddToCourseInProgress}>
+            Save to Courses In Progress
+          </button>
         </div>
       </>
     );

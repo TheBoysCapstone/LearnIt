@@ -3,10 +3,14 @@ import axios from "axios";
 import Menu from "../Components/menu.js";
 import CourseForm from "../Components/course-form.js";
 import Categories from "../Components/course-categories.js";
+import Courses from "../Components/courses.js";
+import Course from "../Components/course.js";
 
 const User = ({ user, setRedirect, setUser }) => {
   const [component, setComponent] = useState("");
-  
+  const [category, setCategory] = useState("");
+  const [courseID, setCourseID] = useState("");
+
   const handleLogout = () => {
     axios({
       method: "POST",
@@ -27,7 +31,6 @@ const User = ({ user, setRedirect, setUser }) => {
   }, [component]);
 
   if (component === "New Course") {
-    console.log("Hello");
     return (
       <>
         <Menu handler={setComponent} />
@@ -38,7 +41,26 @@ const User = ({ user, setRedirect, setUser }) => {
     return (
       <>
         <Menu handler={setComponent} />
-        <Categories handler={setComponent} />
+        <Categories handler={setComponent} setCategory={setCategory} />
+      </>
+    );
+  } else if (component === "courses") {
+    return (
+      <>
+        <Menu handler={setComponent} />
+        <Courses
+          user={user}
+          category={category}
+          handler={setComponent}
+          setCourseID={setCourseID}
+        />
+      </>
+    );
+  } else if (component === "course") {
+    return (
+      <>
+        <Menu handler={setComponent} />
+        <Course user={user} courseID={courseID} />
       </>
     );
   } else {

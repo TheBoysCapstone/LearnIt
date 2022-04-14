@@ -3,7 +3,7 @@ import Card from "./card.js";
 
 const categories = [
   {
-    category: "IT/Software",
+    category: "Software",
     description: "Anything IT/Software related",
     color: "success",
   },
@@ -34,7 +34,12 @@ const categories = [
   },
 ];
 
-const Categories = ({ handler }) => {
+const Categories = ({ handler, setCategory }) => {
+  const handleClick = (category) => {
+    handler("courses")
+    setCategory(category)
+  }
+
   return (
     <>
       <div className="container high-width">
@@ -45,6 +50,7 @@ const Categories = ({ handler }) => {
             title={course.category}
             color={course.color}
             description={course.description}
+            handler={handleClick}
           />
         ))}
       </div>

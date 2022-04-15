@@ -16,6 +16,9 @@ h3 {
   text-align: center;
 }
 
+.right {
+  float: right;
+}
 .logo {
   margin: 0;
   background-color: #04aa6d;
@@ -104,6 +107,10 @@ textarea {
   border: none;
   background: #f1f1f1;
 }
+input[type=checkbox]{
+  width: 30px;
+  margin: 15px;
+}
 
 /* Style the submit button with a specific background color etc */
 input[type="text"]:focus,
@@ -130,6 +137,15 @@ button {
 
 button:hover {
   opacity: 1;
+}
+iframe {
+  width: 100%;
+  height: 500px;
+  
+}
+.checkbox-label{
+  margin-left: 10px;
+  font-size: 12px
 }
 .transparent-button {
   background-color: #fff;
@@ -174,8 +190,18 @@ button:hover {
   align-items: center;
 }
 
+.question-form {
+  max-height: 100%; 
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 15px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  overflow: hidden;
+
+}
 .card {
-  padding: 10px;
+  /* padding: 10px; */
   margin: 20px;
   height: 200px;
   width: 250px;
@@ -185,18 +211,40 @@ button:hover {
   color: #fff;
   display: inline-block;
   cursor: pointer;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  transition: 0.3s
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
 }
 
 .card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   opacity: 1;
 }
-.card h3{
+.card h3 {
   padding-top: 20%;
   margin: 10px;
 }
+
+.article {
+  text-align: left;
+  font-size: 14px;
+  line-height: 200%;
+}
+
+.answer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.answer-btn {
+  display: flex;
+  justify-content: flex-end;
+
+}
+
+.answer-btn button {
+  width: 30%;
+}
+
 .success {
   background-color: #04aa6d;
 } /* Green */
@@ -213,3 +261,15 @@ button:hover {
   background-color: #e7e7e7;
   color: black;
 } /* Gray */
+
+.red-text {
+  color:#f44336
+}
+
+.green-text {
+  color:#04aa6d
+}
+
+.center-text {
+  text-align: center
+}

@@ -5,8 +5,9 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const Course = require("../models/course");
 const Question = require("../models/question");
+const Video = require("../models/video");
+const CompletedCourse = require("../models/completed-course.js");
 const authorize = require("../middleware/authorize");
-const question = require("../models/question");
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -54,7 +55,6 @@ router.post("/register", (req, res, next) => {
       res.json({ success: true, redirectTo: "login" });
     }
   });
-  console.log(req.body);
 });
 
 //login route
@@ -71,9 +71,38 @@ router.get("/failed-login", (req, res) => {
   res.json({ success: false, message: "Username or password is incorrect" });
 });
 
-//
 router.get("/:id", authorize, (req, res) => {
   res.json({ success: true, user: req.user, redirectTo: "user" });
+});
+
+router.get("/:id/get-courses/:category", authorize, (req, res) => {
+  let _id = mongoose.Types.ObjectId(req.params.id);
+
+  Course.find({ _id: { $ne: _id } })
+    .populate("userID")
+    .exec((err, course) => {
+      res.json({ success: true, course: course });
+    });
+});
+
+//
+router.get("/:id/get-course/:courseID", authorize, async (req, res) => {
+  Course.findOne({ _id: req.params.courseID }, (err, course) => {
+    course.video = "";
+    course.questions = [];
+    Question.find({ courseID: req.params.courseID }, (err, questions) => {
+      Video.findOne({ courseID: req.params.courseID }, (err, video) => {
+        course.questions = questions;
+        course.video = video;
+        res.json({
+          success: true,
+          course: course,
+          questions: questions,
+          video: video,
+        });
+      });
+    });
+  });
 });
 
 //this will save the course and questions into the database
@@ -87,24 +116,68 @@ router.post("/:id/create-course", authorize, async (req, res) => {
 
   let questionResult, courseResult;
   courseResult = await newCourse.save();
+
+  if (!courseResult) {
+    res.json({ success: false, message: "Course could not be saved" });
+  }
   //if question was successfully saved and there are questions associated with the course
   //the questions will be saved in the questions collection of the database
-  if ((await courseResult) && req.body.question) {
-    const newQuestion = new Question({
-      question: req.body.question,
-      answers: req.body.answers,
+  if ((await courseResult) && req.body.questions) {
+    req.body.questions.forEach(async (question) => {
+      const newQuestion = new Question({
+        question: question.question,
+        answers: question.answers,
+        courseID: courseResult._id,
+      });
+
+      questionResult = await newQuestion.save();
+
+      if (!questionResult) {
+        res.json({ success: false, message: "Course could not be saved" });
+      }
+    });
+  }
+  if (req.body.video) {
+    const newVideo = new Video({
+      video: req.body.video,
       courseID: courseResult._id,
     });
-    questionResult = await newQuestion.save();
-    //if questionResult and courseResult are not null save was successful
-    if (courseResult && questionResult)
-      //return success message
-      res.json({ success: true });
-    else {
-      //if errors happened send error status to client
-      res.json({ error: true, message: "Could not save the course..." });
+    const videoResult = await newVideo.save();
+
+    if (!videoResult) {
+      res.json({ success: false, message: "Course could not be saved" });
     }
   }
+  res.json({ success: true });
+});
+
+//save course to a collection of completed courses
+router.post("/:id/complete-course/:courseID", authorize, (req, res) => {
+  CompletedCourse.find(
+    { courseID: req.params.courseID },
+    async (err, result) => {
+      if (result.length === 0) {
+        const completedCourse = new CompletedCourse({
+          userID: req.params.id,
+          courseID: req.params.courseID,
+        });
+        const result = await completedCourse.save()
+        if (result){
+          console.log(error)
+          res.json({
+            success: false,
+            message: "Course completed",
+          });
+        }
+          
+        else res.json({ success: false, message: "Course status could not be updated" });
+      }
+    }
+  );
+  res.json({
+    success: false,
+    message: "Course already completed",
+  });
 });
 
 //this will remove all users in the users collection(for debugging purposes)
@@ -118,6 +191,41 @@ router.post("/deleteall", (req, res) => {
     else res.json({ success: true, message: "all users removed" });
   });
 });
+
+//will delete all courses, questions and videos associated with it(for debug purposes)
+router.post("/deleteallcourses", (req, res) => {
+  Course.remove((err) => {
+    if (err)
+      res.json({
+        success: false,
+        message: "error occured while removing users",
+      });
+    else res.json({ success: true, message: "all users removed" });
+  });
+
+  Question.remove((err) => {
+    if (err)
+      res.json({
+        success: false,
+        message: "error occured while removing users",
+      });
+    else res.json({ success: true, message: "all users removed" });
+  });
+
+  Video.remove((err) => {
+    if (err)
+      res.json({
+        success: false,
+        message: "error occured while removing users",
+      });
+    else
+      res.json({
+        success: true,
+        message: "all courses, questions, videos removed",
+      });
+  });
+});
+
 //logs out user; makes sure the right user is trying to logout
 router.post("/:id/logout", authorize, (req, res) => {
   req.logout();

@@ -48,7 +48,7 @@ const Login = ({setRedirect, setUser}) =>{
     }
     return(
         <div className="container medium-width">
-            <h3>Login to continue</h3>
+            <h3 className="login">Login to continue</h3>
             <form>
                 <div>
                     <h4 className="warning">{warning}</h4>

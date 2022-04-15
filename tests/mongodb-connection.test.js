@@ -1,5 +1,4 @@
 // Test Connection to mongodb database server
-
 const mongoose = require('mongoose');
 const url = "mongodb+srv://theboys:learnit_password@learnit.9tsp5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 

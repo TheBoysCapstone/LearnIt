@@ -60,7 +60,7 @@ const User = ({ user, setRedirect, setUser }) => {
     return (
       <>
         <Menu handler={setComponent} />
-        <Course user={user} courseID={courseID} />
+        <Course user={user} courseID={courseID} setComponent={setComponent} />
       </>
     );
   } else {

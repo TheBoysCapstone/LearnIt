@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Course = ({ user, courseID }) => {
+const Course = ({ user, courseID, setComponent }) => {
   const [course, setCourse] = useState({});
   const [questions, setQuestions] = useState([]);
   const [video, setVideo] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
   useEffect(() => {
     let url = `http://localhost:8080/${user._id}/get-course/${courseID}`;
     axios({
@@ -69,20 +70,32 @@ const Course = ({ user, courseID }) => {
     }
   };
 
-  const handleCompleteCourse = () => { 
-    let url = `http://localhost:8080/${user._id}/complete-course/${courseID}`
-    console.log(url)
+  const handleCompleteCourse = () => {
+    let url = `http://localhost:8080/${user._id}/complete-course/${courseID}`;
+    console.log(url);
     axios({
       method: "POST",
       url: url,
       withCredentials: true,
-    }).then((res)=>{
-      console.log(res.data)
-    })
+    }).then((res) => {
+      console.log(res.data);
+      if (res.data) setIsDisabled(true);
+    });
   };
-  const handleAddToCourseInProgress = () => {
 
-  }
+
+  const handleAddToCourseInProgress = () => {
+    let url = `http://localhost:8080/${user._id}/save-course/${courseID}`;
+    console.log(url);
+    axios({
+      method: "POST",
+      url: url,
+      withCredentials: true,
+    }).then((res) => {
+      console.log(res.data);
+      if (res.data) setIsDisabled(true);
+    });
+  };
 
   //check if object is empty
   if (Object.keys(course).length !== 0) {
@@ -127,10 +140,18 @@ const Course = ({ user, courseID }) => {
               </div>
             </div>
           ))}
-          <button className="green-btn" onClick={handleCompleteCourse}>
+          <button
+            className="green-btn"
+            disabled={isDisabled}
+            onClick={handleCompleteCourse}
+          >
             Complete Course
           </button>
-          <button className="blue-btn" onClick={handleAddToCourseInProgress}>
+          <button
+            className="blue-btn"
+            disabled={isDisabled}
+            onClick={handleAddToCourseInProgress}
+          >
             Save to Courses In Progress
           </button>
         </div>

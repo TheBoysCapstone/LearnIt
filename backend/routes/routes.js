@@ -7,6 +7,7 @@ const Course = require("../models/course");
 const Question = require("../models/question");
 const Video = require("../models/video");
 const CompletedCourse = require("../models/completed-course.js");
+const SaveCourse = require("../models/saved-course.js")
 const authorize = require("../middleware/authorize");
 
 router.get("/", (req, res) => {
@@ -175,8 +176,35 @@ router.post("/:id/complete-course/:courseID", authorize, (req, res) => {
     }
   );
   res.json({
-    success: false,
+    success: true,
     message: "Course already completed",
+  });
+});
+
+router.post("/:id/save-course/:courseID", authorize, (req, res) => {
+  SaveCourse.find(
+    { courseID: req.params.courseID },
+    async (err, result) => {
+      if (result.length === 0) {
+        const saveCourse = new SaveCourse({
+          userID: req.params.id,
+          courseID: req.params.courseID,
+        });
+        const result = await saveCourse.save()
+        if (result){
+          res.json({
+            success: false,
+            message: "Course saved",
+          });
+        }
+          
+        else res.json({ success: false, message: "Course status could not be updated" });
+      }
+    }
+  );
+  res.json({
+    success: true,
+    message: "Course already saved",
   });
 });
 

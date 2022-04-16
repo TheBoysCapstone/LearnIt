@@ -153,7 +153,8 @@ router.post("/:id/create-course", authorize, async (req, res) => {
 });
 
 //save course to a collection of completed courses
-router.post("/:id/complete-course/:courseID", authorize, (req, res) => {
+router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
+  await SaveCourse.deleteOne({courseID: req.params.courseID})
   CompletedCourse.find(
     { courseID: req.params.courseID },
     async (err, result) => {
@@ -181,7 +182,8 @@ router.post("/:id/complete-course/:courseID", authorize, (req, res) => {
   });
 });
 
-router.post("/:id/save-course/:courseID", authorize, (req, res) => {
+router.post("/:id/save-course/:courseID", authorize, async(req, res) => {
+  await CompletedCourse.deleteOne({courseID: req.params.courseID})
   SaveCourse.find(
     { courseID: req.params.courseID },
     async (err, result) => {

@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "react-scripts  build",
-    "start": "CHOKIDAR_USEPOLLING=true react-scripts  start",
+    "start": "react-scripts  start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

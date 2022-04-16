@@ -8,6 +8,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/preset-react": "^7.16.7",
+    "expect-puppeteer": "^6.1.0",
     "jest": "^27.5.1",
     "mongoose": "^6.2.3",
     "puppeteer": "^13.5.2"

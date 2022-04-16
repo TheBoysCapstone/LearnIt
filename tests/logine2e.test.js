@@ -1,10 +1,23 @@
 const puppeteer = require('puppeteer');
 
-describe('Login', () => {
+describe('Login page', () => {
+    let browser;
+    let page;
 
-    it('should show the login text', () => {
-        expect(true).toBe(true);
+    beforeAll( async () => {
+        browser = await puppeteer.launch({ headless: false, ignoreDefaultArgs: ['--disable-extensions'] });
+        page = await browser.newPage();
     });
-
-    //afterAll(() => browser.close());
+    
+    
+    jest.setTimeout(10000);
+    it('should navigate to the login page', async () => {
+        await page.goto('http://localhost:3000', {waitUntil: 'domcontentloaded'});
+        await page.waitForSelector(".signup-header")
+        await page.click(".group-btn")
+        await page.waitForSelector(".login")
+        const headerHandler = await page.$('.login');
+        const html = await page.evaluate(headerHandle => headerHandle.innerHTML, headerHandle);
+        expect(html).toBe('Login to continue');
+    });
 });

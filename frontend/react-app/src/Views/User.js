@@ -5,9 +5,10 @@ import CourseForm from "../Components/course-form.js";
 import Categories from "../Components/course-categories.js";
 import Courses from "../Components/courses.js";
 import Course from "../Components/course.js";
+import Main from '../Components/main.js'
 
 const User = ({ user, setRedirect, setUser }) => {
-  const [component, setComponent] = useState("");
+  const [component, setComponent] = useState("Main");
   const [category, setCategory] = useState("");
   const [courseID, setCourseID] = useState("");
 
@@ -63,10 +64,11 @@ const User = ({ user, setRedirect, setUser }) => {
         <Course user={user} courseID={courseID} setComponent={setComponent} />
       </>
     );
-  } else {
+  } else if(component==="Main"){
     return (
       <>
         <Menu handler={setComponent} />
+        <Main />
       </>
     );
   }

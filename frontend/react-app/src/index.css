@@ -244,6 +244,32 @@ iframe {
 .answer-btn button {
   width: 30%;
 }
+.main-options-container {
+  width: 60%;
+  margin: auto;
+  margin-top: 100px;
+}
+
+.main-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+  cursor: pointer;
+  padding: 10px;
+  border-top: 1px solid rgb(189, 188, 188);
+  color: rgb(75, 74, 74);
+}
+
+.main-options:hover:not(.course-number) {
+  text-decoration: underline
+}
+.main-options:last-child {
+  border-bottom: 1px solid rgb(189, 188, 188);
+}
+.course-number {
+  font-size: 18px;
+}
 
 .success {
   background-color: #04aa6d;

@@ -261,7 +261,7 @@ iframe {
   color: rgb(75, 74, 74);
 }
 
-.main-options:hover:not(.course-number) {
+.main-options:hover :not(.course-number) {
   text-decoration: underline
 }
 .main-options:last-child {

@@ -68,9 +68,14 @@ const User = ({ user, setRedirect, setUser }) => {
     return (
       <>
         <Menu handler={setComponent} />
-        <Main />
+        <Main user={user}/>
       </>
-    );
+    )
+  }else{
+    return (
+      <>
+      </>
+    )
   }
 };
 

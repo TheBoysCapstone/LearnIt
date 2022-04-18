@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const options = [
   {
@@ -12,17 +13,35 @@ const options = [
     tag: "saved",
   },
   {
-    name: "Courses Created",
+    name: "Courses Completed",
     description: "number of courses completed by the user",
     tag: "completed",
   },
 ];
-const Main = () => {
+const Main = ({ user }) => {
   const [numCourses, setNumCourses] = useState({
     created: 0,
     saved: 0,
     completed: 0,
   });
+
+  useEffect(() => {
+    const url = `http://localhost:8080/${user._id}/main`;
+    axios({
+      method: "GET",
+      url: url,
+      withCredentials: true,
+    }).then((res) => {
+      if (res.data && res.data.success) {
+        console.log(res.data);
+        setNumCourses({
+          created: res.data.created,
+          saved: res.data.saved,
+          completed: res.data.completed,
+        });
+      }
+    });
+  }, []);
 
   return (
     <>

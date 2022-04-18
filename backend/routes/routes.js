@@ -7,7 +7,7 @@ const Course = require("../models/course");
 const Question = require("../models/question");
 const Video = require("../models/video");
 const CompletedCourse = require("../models/completed-course.js");
-const SaveCourse = require("../models/saved-course.js")
+const SaveCourse = require("../models/saved-course.js");
 const authorize = require("../middleware/authorize");
 
 router.get("/", (req, res) => {
@@ -77,11 +77,13 @@ router.get("/:id", authorize, (req, res) => {
 });
 
 router.get("/:id/get-courses/:category", authorize, (req, res) => {
-  let _id = mongoose.Types.ObjectId(req.params.id);
+  let id = mongoose.Types.ObjectId(req.params.id);
+  console.log("id ", id)
 
-  Course.find({ _id: { $ne: _id } })
+  Course.find({ userID: { $ne: id } })
     .populate("userID")
     .exec((err, course) => {
+      console.log(course)
       res.json({ success: true, course: course });
     });
 });
@@ -154,7 +156,7 @@ router.post("/:id/create-course", authorize, async (req, res) => {
 
 //save course to a collection of completed courses
 router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
-  await SaveCourse.deleteOne({courseID: req.params.courseID})
+  await SaveCourse.deleteOne({ courseID: req.params.courseID });
   CompletedCourse.find(
     { courseID: req.params.courseID },
     async (err, result) => {
@@ -163,16 +165,18 @@ router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
           userID: req.params.id,
           courseID: req.params.courseID,
         });
-        const result = await completedCourse.save()
-        if (result){
-          console.log(error)
+        const result = await completedCourse.save();
+        if (result) {
+          console.log(error);
           res.json({
             success: false,
             message: "Course completed",
           });
-        }
-          
-        else res.json({ success: false, message: "Course status could not be updated" });
+        } else
+          res.json({
+            success: false,
+            message: "Course status could not be updated",
+          });
       }
     }
   );
@@ -182,31 +186,47 @@ router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
   });
 });
 
-router.post("/:id/save-course/:courseID", authorize, async(req, res) => {
-  await CompletedCourse.deleteOne({courseID: req.params.courseID})
-  SaveCourse.find(
-    { courseID: req.params.courseID },
-    async (err, result) => {
-      if (result.length === 0) {
-        const saveCourse = new SaveCourse({
-          userID: req.params.id,
-          courseID: req.params.courseID,
+router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
+  await CompletedCourse.deleteOne({ courseID: req.params.courseID });
+  SaveCourse.find({ courseID: req.params.courseID }, async (err, result) => {
+    if (result.length === 0) {
+      const saveCourse = new SaveCourse({
+        userID: req.params.id,
+        courseID: req.params.courseID,
+      });
+      const result = await saveCourse.save();
+      if (result) {
+        res.json({
+          success: false,
+          message: "Course saved",
         });
-        const result = await saveCourse.save()
-        if (result){
-          res.json({
-            success: false,
-            message: "Course saved",
-          });
-        }
-          
-        else res.json({ success: false, message: "Course status could not be updated" });
-      }
+      } else
+        res.json({
+          success: false,
+          message: "Course status could not be updated",
+        });
     }
-  );
+  });
   res.json({
     success: true,
     message: "Course already saved",
+  });
+});
+
+//will respond with json specifying number of courses created, taken and completed
+router.get("/:id/main", authorize, (req, res) => {
+  let numCourses = { created: 0, completed: 0, saved: 0 };
+  let queryParam = { userID: req.params.id };
+  Course.countDocuments(queryParam, (err, count) => {
+    numCourses["created"] = count;
+
+    CompletedCourse.countDocuments(queryParam, (err, count) => {
+      numCourses["completed"] = count;
+      SaveCourse.countDocuments(queryParam, (err, count) => {
+        numCourses["saved"] = count;
+        res.json({ ...numCourses, success: true });
+      });
+    });
   });
 });
 
@@ -216,7 +236,7 @@ router.post("/deleteall", (req, res) => {
     if (err)
       res.json({
         success: false,
-        message: "error occured while removing users",
+        message: "error occurred while removing users",
       });
     else res.json({ success: true, message: "all users removed" });
   });
@@ -237,7 +257,7 @@ router.post("/deleteallcourses", (req, res) => {
     if (err)
       res.json({
         success: false,
-        message: "error occured while removing users",
+        message: "error occurred while removing users",
       });
     else res.json({ success: true, message: "all users removed" });
   });

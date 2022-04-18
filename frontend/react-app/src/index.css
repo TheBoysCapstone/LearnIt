@@ -107,6 +107,9 @@ textarea {
   border: none;
   background: #f1f1f1;
 }
+textarea {
+  height: 100px;
+}
 input[type="checkbox"] {
   width: 30px;
   margin: 15px;
@@ -181,7 +184,7 @@ iframe {
 }
 
 .medium-width {
-  max-width: 40%;
+  max-width: 50%;
 }
 
 .high-width {
@@ -200,6 +203,7 @@ iframe {
   margin-top: 30px;
   margin-bottom: 20px;
   overflow: hidden;
+  
 }
 .card {
   /* padding: 10px; */
@@ -262,13 +266,52 @@ iframe {
 }
 
 .main-options:hover :not(.course-number) {
-  text-decoration: underline
+  text-decoration: underline;
 }
 .main-options:last-child {
   border-bottom: 1px solid rgb(189, 188, 188);
 }
 .course-number {
   font-size: 18px;
+}
+
+.forum-container {
+  margin: auto;
+  margin-top: 100px;
+}
+.forum-container .thread {
+  margin-top: 20px;
+  color: rgb(75, 74, 74);
+  padding: 0 15px;
+  border: 1px solid rgb(189, 188, 188);
+  cursor: pointer;
+}
+.forum-container .thread:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1);
+  
+}
+.forum-container .thread-header {
+  border-bottom: 1px dashed rgb(189, 188, 188);
+  padding: 15px;
+}
+.forum-container .thread-header .thread-title {
+  margin-bottom: 15px;
+}
+
+.thread-header .thread-category {
+  display: block;
+  width: 12%;
+  text-align: center;
+  padding: 15 15;
+  background-color: rgb(189, 188, 188);
+  color: #fff;
+  border-radius: 10px;
+}
+.forum-container .thread-footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px;
+  padding: 30 30;
 }
 
 .success {

@@ -5,7 +5,8 @@ import CourseForm from "../Components/course-form.js";
 import Categories from "../Components/course-categories.js";
 import Courses from "../Components/courses.js";
 import Course from "../Components/course.js";
-import Main from '../Components/main.js'
+import Main from "../Components/main.js";
+import Forum from "../Components/forum.js";
 
 const User = ({ user, setRedirect, setUser }) => {
   const [component, setComponent] = useState("Main");
@@ -64,18 +65,22 @@ const User = ({ user, setRedirect, setUser }) => {
         <Course user={user} courseID={courseID} setComponent={setComponent} />
       </>
     );
-  } else if(component==="Main"){
+  } else if (component === "Main") {
     return (
       <>
         <Menu handler={setComponent} />
-        <Main user={user}/>
+        <Main user={user} />
       </>
-    )
-  }else{
+    );
+  } else if (component === "Forum") {
     return (
       <>
+        <Menu handler={setComponent} />
+        <Forum user={user} setComponent={setComponent} />
       </>
-    )
+    );
+  } else {
+    return <></>;
   }
 };
 

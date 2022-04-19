@@ -1,58 +1,369 @@
-.container {
-  margin: auto;
+html {
+  @import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+  height: 80%;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+h3 {
   text-align: center;
 }
 
-.form {
-  max-width: 40vw;
-  margin: auto;
-  padding: 50px 0;
-  border-style: solid;
-  border-color: #d6c7c8;
-  border-width: 1px;
-  border-radius: 5px;
+.right {
+  float: right;
+}
+.logo {
+  margin: 0;
+  background-color: #04aa6d;
 }
 
-.form label {
+.logo p {
+  margin: 0;
+  font-size: 50px;
+  color: #fff;
+  padding-left: 30px;
+  font-family: "Lobster", cursive;
+}
+
+.sidenav {
+  float: left;
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 15%; /* Set the width of the sidebar */
+  /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  margin-left: 5%;
+  margin-top: 20px;
+  margin-bottom: 20%;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  background-color: #f7f8fa;
+}
+
+.sidenav ul {
+  padding: 0;
+}
+
+.sidenav ul li {
   display: block;
+  text-decoration: none;
+  padding: 20px 20px;
+  color: #777;
+  /* text-align: center;
+  border-right: 1px solid #E7E7E7; */
+
+  /* == */
+  text-align: left;
+  height: 36px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  /* == */
+}
+.sidenav ul li:hover:not(.active) {
+  background-color: #e2e3e4;
 }
 
-.form input {
-  border-radius: 5px;
-  border-color: #d6c7c8;
-  border-style: solid;
-  margin: 5px;
-  padding: 10px;
+.sidenav small {
+  display: block;
+  font-size: 11px;
+}
+.sidenav strong {
+  display: block;
+  text-transform: uppercase;
 }
 
-.btn {
-  border-radius: 5px;
-  border-color: transparent;
+strong,
+small {
+  pointer-events: none;
+}
+
+.active {
+  background-color: rgb(189, 188, 188);
+  text-decoration: none;
+}
+
+.active small,
+.active strong {
+  color: #f7f8fa;
+}
+
+/* Style inputs with type="text", select elements and textareas */
+input,
+select,
+textarea {
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+textarea {
+  height: 100px;
+}
+input[type="checkbox"] {
+  width: 30px;
+  margin: 15px;
+}
+
+/* Style the submit button with a specific background color etc */
+input[type="text"]:focus,
+input[type="password"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* When moving the mouse over the submit button, add a darker green color */
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Set a style for all buttons */
+button {
   color: white;
-  font-size: large;
-  margin: 5px;
+  padding: 20px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+button:hover:not([disabled]) {
+  opacity: 1;
+}
+.green-btn {
+  background-color: #04aa6d;
+}
+
+.blue-btn {
+  background-color: #2196f3;
+}
+iframe {
+  width: 100%;
+  height: 500px;
+}
+.checkbox-label {
+  margin-left: 10px;
+  font-size: 12px;
+}
+.transparent-button {
+  background-color: #fff;
+  color: #f44336;
+}
+/* Extra styles for the cancel button */
+.red-btn {
+  background-color: #f44336;
+}
+
+/* Float cancel and signup buttons and add an equal width */
+.group-btn {
+  float: left;
+  width: 50%;
+}
+
+/* Add a background color and some padding around the form */
+.container {
+  text-align: center;
+  border-radius: 5px;
+  padding: 20px;
+  margin: auto;
+}
+
+.medium-width {
+  max-width: 50%;
+}
+
+.high-width {
+  max-width: 60%;
+}
+.answer-form {
+  display: flex;
+  align-items: center;
+}
+
+.question-form {
+  max-height: 100%;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 15px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  
+}
+.card {
+  /* padding: 10px; */
+  margin: 20px;
+  height: 200px;
+  width: 250px;
+  opacity: 0.9;
+  text-align: center;
+  vertical-align: middle;
+  color: #fff;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+.card h3 {
+  padding-top: 20%;
+  margin: 10px;
+}
+
+.article {
+  text-align: left;
+  font-size: 14px;
+  line-height: 200%;
+}
+
+.answer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.answer-btn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.answer-btn button {
+  width: 30%;
+}
+.main-options-container {
+  width: 60%;
+  margin: auto;
+  margin-top: 100px;
+}
+
+.main-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+  cursor: pointer;
   padding: 10px;
-  width: 255px;
+  border-top: 1px solid rgb(189, 188, 188);
+  color: rgb(75, 74, 74);
 }
 
-.btn-signup {
-  background-color: #de474a;
+.main-options:hover :not(.course-number) {
+  text-decoration: underline;
+}
+.main-options:last-child {
+  border-bottom: 1px solid rgb(189, 188, 188);
+}
+.course-number {
+  font-size: 18px;
 }
 
-.btn-login, 
-.btn-logout {
-  background-color: #3589e8;
+.forum-container {
+  margin: auto;
+  margin-top: 100px;
 }
-.btn-create{
-  background-color: #0db840;
+.forum-container .thread {
+  margin-top: 20px;
+  color: rgb(75, 74, 74);
+  padding: 0 15px;
+  border: 1px solid rgb(189, 188, 188);
+  cursor: pointer;
 }
-.btn-nav {
-  border-color: transparent;
-  background-color: transparent;
-  color: #3589e8;
-  font-size: large;
+.forum-container .thread:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1);
+  
+}
+.forum-container .thread-header {
+  border-bottom: 1px dashed rgb(189, 188, 188);
+  padding: 15px;
+}
+.forum-container .thread-header .thread-title {
+  margin-bottom: 15px;
 }
 
+.thread-header .thread-category {
+  display: block;
+  width: 12%;
+  text-align: center;
+  padding: 15 15;
+  background-color: rgb(189, 188, 188);
+  color: #fff;
+  border-radius: 10px;
+}
+.forum-container .thread-footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px;
+  padding: 30 30;
+}
+
+.thread-container{
+  display: block;
+  margin: auto;
+  margin-top: 100px;
+  color: rgb(75, 74, 74);
+}
+
+.thread-container .thread-info {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 16px;
+  padding: 15px;
+  border-bottom: 1px dashed rgb(189, 188, 188);
+}
+.thread-container .thread-header{
+  border: 1px solid rgb(189, 188, 188);
+}
+.thread-container .thread-content{
+  padding: 15px;
+}
+
+.thread-container .comment-form {
+  margin: auto;
+}
+
+.success {
+  background-color: #04aa6d;
+} /* Green */
+.info {
+  background-color: #2196f3;
+} /* Blue */
 .warning {
-  color: red;
+  background-color: #ff9800;
+} /* Orange */
+.danger {
+  background-color: #f44336;
+} /* Red */
+.other {
+  background-color: #e7e7e7;
+  color: black;
+} /* Gray */
+
+.red-text {
+  color: #f44336;
+}
+
+.green-text {
+  color: #04aa6d;
+}
+
+.center-text {
+  text-align: center;
 }

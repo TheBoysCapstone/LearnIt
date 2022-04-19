@@ -10,6 +10,21 @@ const CompletedCourse = require("../models/completed-course.js");
 const SaveCourse = require("../models/saved-course.js");
 const Thread = require("../models/thread");
 const authorize = require("../middleware/authorize");
+const question = require('../models/question');
+const logger = require('../logger/dev-logger')
+const limitter = require('express-rate-limit')
+
+const registerLimitter = limitter({
+  windowMs: 5 * 60 * 1000, //A client can register 2 accounts every 5 minutes
+  max: 2,
+  message: 'Too many registation attempts, try again later.',
+})
+
+const loginLimitter = limitter({
+  windowMS: 2 * 60 * 1000, //A client can attempt to login 5 times every two minutes 
+  max: 5,
+  message: 'Too many login attempts, try again later.',
+})
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -124,6 +139,45 @@ router.post("/:id/create-course", authorize, async (req, res) => {
   if (!courseResult) {
     res.json({ success: false, message: "Course could not be saved" });
   }
+    
+  })
+
+
+  //checks if the user exists in the database
+  //if it does it sends an error message back to the client
+  //if not it hashes the user's password, builds a user object and saves it to the database
+  //after saving the user a message with redirect information is sent back to the client
+  router.post("/register", registerLimitter,(req, res, next)=>{
+    User.findOne({username:req.body.username}, async(err, user)=>{
+      if(user) {
+        res.json({error: true, message: "User already exists. Try another username"})
+      }
+      else if(req.body.password.length < 6){
+        res.json({error: true, message: "Password must be 6 characters"})
+      }
+      else if(req.body.password.length > 16){
+        res.json({error: true, message: "Password is too long"})
+      }
+      else if(req.body.password.search(/[a-z]/) < 0){
+        res.json({error: true, message: "Password must contain a lowercase leter"})
+      }
+      else if(req.body.password.search(/[A-Z]/) < 0){
+        res.json({error: true, message: "Password must contain a uppercase letter"})
+      }
+      else if(req.body.password.search(/[0-9]/) < 0){
+        res.json({error: true, message: "Password must contain a number"})
+      }
+      else{
+        const hashedPassword = await bcrypt.hash(req.body.password, 11)
+        const newUser = new User({
+          username:req.body.username,
+          password: hashedPassword,
+          email: req.body.email
+        })
+        await newUser.save()
+        logger.info(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: New User Created]}`)
+        res.json({success : true ,redirectTo: "login"})
+
   //if question was successfully saved and there are questions associated with the course
   //the questions will be saved in the questions collection of the database
   if ((await courseResult) && req.body.questions) {
@@ -213,6 +267,18 @@ router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
     message: "Course already saved",
   });
 });
+ 
+//login route
+router.post("/login", loginLimitter, passport.authenticate('local',{failureRedirect: "/failed-login"}), (req, res)=>{
+    res.json({user: req.user, redirectTo: 'user'})
+    logger.warning(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: Successful Login]`)
+})
+
+//will fire when login fails
+router.get("/failed-login", (req, res)=>{
+    res.json({success: false, message: "Username or password is incorrect"})
+    logger.warning(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: Failed Login]`)
+})
 
 router.post("/:id/create-thread", authorize, (req, res) => {
   console.log("Body", req.body);

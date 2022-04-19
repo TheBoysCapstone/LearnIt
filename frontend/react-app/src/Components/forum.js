@@ -1,64 +1,120 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Thread from "./thread.js";
 
 const Forum = ({ user, setComponent }) => {
-  const [showThreadForm, setShowThreadForm] = useState(false);
-  const toggleForumForm = () => {
-    setShowThreadForm(!showThreadForm);
+  const [showThreads, setShowThreads] = useState(true);
+  const [threads, setThreads] = useState([]);
+  const [thread, setThread] = useState({});
+  const [showThread, setShowThread] = useState(false);
+
+  useEffect(() => {
+    loadThreads();
+  }, []);
+
+  const makeThreadsVisible = (flag) => {
+    console.log(flag)
+    setShowThreads(flag);
+    setThread({});
   };
 
-  return (
-    <>
-      {showThreadForm ? <ForumForm user={user} /> : <ForumList user={user} />}
+  
+  const loadThreads = () => {
+    const url = `http://localhost:8080/${user._id}/get-threads`;
+    axios({
+      url: url,
+      method: "GET",
+      withCredentials: true,
+    }).then((res) => {
+      if (res.data.success) {
+        setThreads([...res.data.threads]);
+      } else {
+        console.log(res.data.message);
+      }
+    });
+  };
 
-      <div className="container medium-width">
-        <button className="green-btn"onClick={toggleForumForm}>{showThreadForm? "Go back":"Start a thread"}</button>
-      </div>
-    </>
-  );
+  const getThread = (e, id) => {
+    console.log(id);
+    const url = `http://localhost:8080/${user._id}/get-thread/${id}`;
+    axios({
+      url: url,
+      method: "GET",
+      withCredentials: true,
+    }).then((res) => {
+      if (res.data.success) {
+        setThread(...res.data.thread);
+      } else {
+        console.log(res.data.message);
+      }
+    });
+  };
+
+  if (Object.keys(thread).length === 0) {
+    return (
+      <>
+        {showThreads ? (
+          <ForumList user={user} threads={threads} getThread={getThread} />
+        ) : (
+          <ForumForm
+            user={user}
+          />
+        )}
+
+        <div className="container medium-width">
+          <button
+            className="green-btn"
+            onClick={() => makeThreadsVisible(!showThreads)}
+          >
+            {showThreads ? "Start a thread" : "Go Back"}
+          </button>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Thread user={user} threadObj={thread} />
+        <div className="container medium-width">
+          <button className="green-btn" onClick={()=>makeThreadsVisible(true)}>
+            "Go Back"
+          </button>
+        </div>
+      </>
+    );
+  }
 };
 
-const ForumList = ({ user }) => {
-  const [threads, setThreads] = useState([
-    {
-      title: "Question about javascript course",
-      category: "IT",
-      createdAt: "02/03/01",
-      author: "test",
-      replies: 13,
-    },
-    {
-      title: "Need help with my Java program...",
-      category: "business",
-      createdAt: "03/03/03",
-      author: "serghei",
-      replies: 23,
-    },
-    {
-      title: "How do you create a business plan?",
-      category: "business",
-      createdAt: "03/04/05",
-      author: "test",
-      replies: 5,
-    },
-  ]);
+const ForumList = ({ user, threads, getThread }) => {
   return (
     <>
       <div className="forum-container medium-width">
         <h3>Forum</h3>
+        {threads.length === 0 ? (
+          <h4 style={{ textAlign: "center", padding: "40px" }}>
+            No threads here yet
+          </h4>
+        ) : (
+          <div></div>
+        )}
         {threads.map((thread, index) => (
-          <div key={index} className="thread ">
+          <div
+            key={index}
+            className="thread"
+            onClick={(e) => getThread(e, thread._id)}
+          >
             <div className="thread-header">
               <div className="thread-title">
                 <strong>{thread.title}</strong>
               </div>
               <div className="thread-category">
-                <small>{thread.category}</small>
+                <small>{thread.topic}</small>
               </div>
             </div>
             <div className="thread-footer">
               <div>
-                <small>Created by: {thread.author}</small>
-                <small> at {thread.createdAt}</small>
+                <small>Created by: {thread.author.username}</small>
+                <small> at {new Date(thread.createdAt).toUTCString()}</small>
               </div>
               <small>{thread.replies} replies</small>
             </div>
@@ -69,19 +125,37 @@ const ForumList = ({ user }) => {
   );
 };
 
-const ForumForm = ({ user }) => {
+const ForumForm = ({ user, toggleForumForm }) => {
+  const [thread, setThread] = useState({ title: "", content: "", topic: "" });
+  const submitThread = () => {
+    const url = `http://localhost:8080/${user._id}/create-thread`;
+    axios({
+      url: url,
+      data: { ...thread },
+      method: "POST",
+      withCredentials: true,
+    }).then((res) => {
+      if (res.data.success) {
+        toggleForumForm(false);
+      }
+    });
+  };
+  const handleThreadChange = (e) => {
+    const [field, value] = [e.target.name, e.target.value];
+    setThread({ ...thread, [field]: value });
+  };
   return (
     <>
       <div className="container medium-width thread-form">
         <h3>Create a thread</h3>
         <div>
           <label htmlFor="title">Title</label>
-          <input type="text" name="title" />
+          <input type="text" name="title" onChange={handleThreadChange} />
         </div>
         <div>
           <div>
             <label htmlFor="topic">Topics</label>
-            <select name="topic">
+            <select name="topic" onChange={handleThreadChange}>
               <option value="default">Choose topic</option>
               <option value="it/software">IT/Software</option>
               <option value="business">Business</option>
@@ -94,8 +168,14 @@ const ForumForm = ({ user }) => {
         </div>
         <div>
           <label htmlFor="content">Content</label>
-          <textarea name="content" placeholder="type your question here"></textarea>
-          <button className="blue-btn">Submit</button>
+          <textarea
+            onChange={handleThreadChange}
+            name="content"
+            placeholder="type your question here"
+          ></textarea>
+          <button className="blue-btn" onClick={submitThread}>
+            Submit
+          </button>
         </div>
       </div>
     </>

@@ -34,9 +34,7 @@ const CourseForm = ({ user }) => {
   const handleCourseChange = (e) => {
     const [field, value] = [e.target.name, e.target.value];
 
-    setCourse({ ...course, [field]: value });
-
-    console.log(course);
+    setCourse({ ...course, [field]: value })
   };
 
   const handleAnswersChange = (e, questionIndex, answerIndex) => {

@@ -314,6 +314,31 @@ iframe {
   padding: 30 30;
 }
 
+.thread-container{
+  display: block;
+  margin: auto;
+  margin-top: 100px;
+  color: rgb(75, 74, 74);
+}
+
+.thread-container .thread-info {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 16px;
+  padding: 15px;
+  border-bottom: 1px dashed rgb(189, 188, 188);
+}
+.thread-container .thread-header{
+  border: 1px solid rgb(189, 188, 188);
+}
+.thread-container .thread-content{
+  padding: 15px;
+}
+
+.thread-container .comment-form {
+  margin: auto;
+}
+
 .success {
   background-color: #04aa6d;
 } /* Green */

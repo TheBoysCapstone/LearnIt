@@ -8,6 +8,7 @@ import Course from "../Components/course.js";
 import Main from "../Components/main.js";
 import Forum from "../Components/forum.js";
 
+
 const User = ({ user, setRedirect, setUser }) => {
   const [component, setComponent] = useState("Main");
   const [category, setCategory] = useState("");

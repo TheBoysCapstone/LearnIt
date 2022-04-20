@@ -1,5 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
 html {
-  @import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+ 
   height: 80%;
 }
 body {
@@ -128,6 +129,25 @@ input[type="password"]:focus {
 /* When moving the mouse over the submit button, add a darker green color */
 input[type="submit"]:hover {
   background-color: #45a049;
+}
+
+.ql-toolbar{
+  max-height: 50px;
+}
+.ql-container {
+  min-height: 15rem;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
+
+.ql-editor {
+  height: 100%;
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
 }
 
 /* Set a style for all buttons */

@@ -34,7 +34,7 @@ const Courses = ({ user, category, handler, setCourseID }) => {
               <p>{`Created by: ${course.userID.username}`}</p>
             </div>
             <div>
-              <p>{`Created at: ${course.createdAt}`}</p>
+              <p>{`Created at: ${new  Date(course.createdAt).toDateString()}`}</p>
             </div>
 
             <button

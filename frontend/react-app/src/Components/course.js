@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 
 const Course = ({ user, courseID, setComponent }) => {
   const [course, setCourse] = useState({});
   const [questions, setQuestions] = useState([]);
-  const [video, setVideo] = useState('');
+  const [video, setVideo] = useState("");
   const [userAnswers, setUserAnswers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -105,9 +107,9 @@ const Course = ({ user, courseID, setComponent }) => {
       <>
         <div className="container medium-width article">
           <h3>{course.title}</h3>
-          {(video.length !==0) ? <iframe src={video} allowFullScreen /> : ""}
+          {video.length !== 0 ? <iframe src={video} allowFullScreen /> : ""}
 
-          <p>{course.body}</p>
+          <div>{parse(DOMPurify.sanitize(course.body))}</div>
           {questions.map((question, questionIndex) => (
             <div key={questionIndex} className="question-form">
               {messages.length != 0 ? (

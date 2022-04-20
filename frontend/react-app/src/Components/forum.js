@@ -6,7 +6,6 @@ const Forum = ({ user, setComponent }) => {
   const [showThreads, setShowThreads] = useState(true);
   const [threads, setThreads] = useState([]);
   const [thread, setThread] = useState({});
-  const [showThread, setShowThread] = useState(false);
 
   useEffect(() => {
     loadThreads();
@@ -16,6 +15,7 @@ const Forum = ({ user, setComponent }) => {
     console.log(flag)
     setShowThreads(flag);
     setThread({});
+    loadThreads()
   };
 
   
@@ -51,7 +51,6 @@ const Forum = ({ user, setComponent }) => {
   }
 
   const getThread = (id) => {
-    console.log(id);
     const url = `http://localhost:8080/${user._id}/get-thread/${id}`;
     axios({
       url: url,
@@ -130,7 +129,7 @@ const ForumList = ({ user, threads, getThread }) => {
             <div className="thread-footer">
               <div>
                 <small>Created by: {thread.author.username}</small>
-                <small> at {new Date(thread.createdAt).toUTCString()}</small>
+                <small> at {new Date(thread.createdAt).toDateString()}</small>
               </div>
               <small>{thread.comments.length} replies</small>
             </div>

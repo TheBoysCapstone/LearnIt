@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const CourseForm = ({ user }) => {
   const [course, setCourse] = useState({
@@ -9,9 +11,11 @@ const CourseForm = ({ user }) => {
   });
   const [video, setVideo] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [content, setContent] = useState("");
   const handleSubmit = () => {
     let payload = course;
     payload.questions = questions;
+    payload.content = content;
     if (video !== "") payload.video = video;
     console.log(payload);
     axios({
@@ -33,29 +37,31 @@ const CourseForm = ({ user }) => {
 
   const handleCourseChange = (e) => {
     const [field, value] = [e.target.name, e.target.value];
+    console.log(e.target.value);
+    setCourse({ ...course, [field]: value });
+  };
 
-    setCourse({ ...course, [field]: value })
+  const handleContentChange = (value) => {
+    setContent(value);
+    console.log(value);
   };
 
   const handleAnswersChange = (e, questionIndex, answerIndex) => {
     const field = e.target.name;
     let questionsArr = questions;
     if (field === "isCorrect") {
-      console.log(e.target.checked);
       questionsArr[questionIndex].answers[answerIndex][field] =
         e.target.checked;
     } else {
       questionsArr[questionIndex].answers[answerIndex][field] = e.target.value;
     }
     setQuestions([...questionsArr]);
-    console.log(questions);
   };
 
   const addAnswerField = (e, questionIndex) => {
     let questionsArr = questions;
     questionsArr[questionIndex].answers.push({ answer: "", isCorrect: false });
     setQuestions([...questionsArr]);
-    console.log(questions);
   };
 
   const addQuestionForm = () => {
@@ -66,7 +72,6 @@ const CourseForm = ({ user }) => {
     let questionArr = questions;
     questionArr.splice(questionIndex, 1);
     setQuestions([...questionArr]);
-    console.log(questions);
   };
 
   const handleQuestionChange = (e, questionIndex) => {
@@ -74,7 +79,6 @@ const CourseForm = ({ user }) => {
 
     questionsArr[questionIndex].question = e.target.value;
     setQuestions([...questionsArr]);
-    console.log(questions);
   };
 
   const removeAnswerField = (e, questionIndex, answerIndex) => {
@@ -83,7 +87,6 @@ const CourseForm = ({ user }) => {
     let questionArr = questions;
     questionArr[questionIndex].answers = ansArr;
     setQuestions([...questionArr]);
-    console.log(questions);
   };
   return (
     <div className="container medium-width">
@@ -102,12 +105,12 @@ const CourseForm = ({ user }) => {
           <label htmlFor="topic">Topics</label>
           <select name="topic" onChange={handleCourseChange}>
             <option value="default">Choose topic</option>
-            <option value="it/software">IT/Software</option>
-            <option value="business">Business</option>
-            <option value="management">Management</option>
-            <option value="science">Science</option>
-            <option value="engineering">Engineering</option>
-            <option value="other">other</option>
+            <option value="Software">IT/Software</option>
+            <option value="Business">Business</option>
+            <option value="Management">Management</option>
+            <option value="Science">Science</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Other">other</option>
           </select>
         </div>
       </div>
@@ -123,11 +126,11 @@ const CourseForm = ({ user }) => {
       </div>
       <div>
         <label htmlFor="content">Course Content</label>
-        <textarea
-          name="content"
-          value={course.content}
-          onChange={handleCourseChange}
-        ></textarea>
+        <ReactQuill
+          size="100"
+          theme="snow"
+          onChange={handleContentChange}
+        />
       </div>
       {questions.map((question, questionIndex) => (
         <div key={questionIndex} className="question-form">

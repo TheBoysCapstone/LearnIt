@@ -10,6 +10,20 @@ const CompletedCourse = require("../models/completed-course.js");
 const SaveCourse = require("../models/saved-course.js");
 const Thread = require("../models/thread");
 const authorize = require("../middleware/authorize");
+const logger = require('../logger/dev-logger')
+const limitter = require('express-rate-limit')
+
+const registerLimitter = limitter({
+  windowMs: 5 * 60 * 1000, //A client can register 2 accounts every 5 minutes
+  max: 2,
+  message: 'Too many registation attempts, try again later.',
+})
+
+const loginLimitter = limitter({
+  windowMS: 2 * 60 * 1000, //A client can attempt to login 5 times every two minutes 
+  max: 5,
+  message: 'Too many login attempts, try again later.',
+})
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -23,7 +37,7 @@ router.get("/", (req, res) => {
 //if it does it sends an error message back to the client
 //if not it hashes the user's password, builds a user object and saves it to the database
 //after saving the user a message with redirect information is sent back to the client
-router.post("/register", (req, res, next) => {
+router.post("/register", registerLimitter, (req, res, next) => {
   User.findOne({ username: req.body.username }, async (err, user) => {
     if (user) {
       res.json({
@@ -54,6 +68,7 @@ router.post("/register", (req, res, next) => {
         email: req.body.email,
       });
       await newUser.save();
+      logger.info(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: New User Created]}`)
       res.json({ success: true, redirectTo: "login" });
     }
   });
@@ -62,15 +77,18 @@ router.post("/register", (req, res, next) => {
 //login route
 router.post(
   "/login",
+  loginLimitter,
   passport.authenticate("local", { failureRedirect: "/failed-login" }),
   (req, res) => {
     res.json({ user: req.user, redirectTo: "user" });
+    logger.warning(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: Successful Login]`)
   }
 );
 
 //will fire when login fails
 router.get("/failed-login", (req, res) => {
   res.json({ success: false, message: "Username or password is incorrect" });
+  logger.warning(`[User: ${req.body.username}] [IP: ${req.socket.remoteAddress}] [Message: Failed Login]`)
 });
 
 router.get("/:id", authorize, (req, res) => {

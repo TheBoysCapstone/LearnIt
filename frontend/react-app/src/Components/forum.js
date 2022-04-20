@@ -34,7 +34,23 @@ const Forum = ({ user, setComponent }) => {
     });
   };
 
-  const getThread = (e, id) => {
+  const postComment = (comment) =>{
+    const url = `http://localhost:8080/${user._id}/post-comment/${thread._id}`
+    axios({
+      url: url,
+      method: 'POST',
+      data: (comment),
+      withCredentials: true
+    }).then((res)=>{
+        if(res.data.success){
+            getThread(thread._id)
+        }else{
+            console.log("Something went wrong")
+        }
+    })
+  }
+
+  const getThread = (id) => {
     console.log(id);
     const url = `http://localhost:8080/${user._id}/get-thread/${id}`;
     axios({
@@ -74,7 +90,7 @@ const Forum = ({ user, setComponent }) => {
   } else {
     return (
       <>
-        <Thread user={user} threadObj={thread} />
+        <Thread user={user} threadObj={thread} postComment={postComment}/>
         <div className="container medium-width">
           <button className="green-btn" onClick={()=>makeThreadsVisible(true)}>
             "Go Back"
@@ -101,7 +117,7 @@ const ForumList = ({ user, threads, getThread }) => {
           <div
             key={index}
             className="thread"
-            onClick={(e) => getThread(e, thread._id)}
+            onClick={(e) => getThread(thread._id)}
           >
             <div className="thread-header">
               <div className="thread-title">
@@ -116,7 +132,7 @@ const ForumList = ({ user, threads, getThread }) => {
                 <small>Created by: {thread.author.username}</small>
                 <small> at {new Date(thread.createdAt).toUTCString()}</small>
               </div>
-              <small>{thread.replies} replies</small>
+              <small>{thread.comments.length} replies</small>
             </div>
           </div>
         ))}

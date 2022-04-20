@@ -84,7 +84,6 @@ router.get("/:id/get-courses/:category", authorize, (req, res) => {
   Course.find({ userID: { $ne: id } })
     .populate("userID")
     .exec((err, course) => {
-      console.log(course);
       res.json({ success: true, course: course });
     });
 });
@@ -234,7 +233,7 @@ router.get("/:id/get-threads", authorize, (req, res) => {
   Thread.find()
     .populate("author", "username")
     .exec((err, result) => {
-      console.log(result);
+      
       if (err) res.json({ success: false, message: "Query failed" });
       if (res) res.json({ success: true, threads: result });
     });
@@ -243,12 +242,31 @@ router.get("/:id/get-threads", authorize, (req, res) => {
 router.get("/:id/get-thread/:threadID", authorize, (req, res) => {
   Thread.find({ _id: req.params.threadID })
     .populate("author", "username")
-    .populate("comments")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "author",
+        select: "username"
+      },
+    })
     .exec((err, result) => {
-      console.log(result);
       if (result) res.json({ success: true, thread: result });
       if (err) res.json({ success: false, message: "Could not find thread" });
     });
+});
+
+router.post("/:id/post-comment/:threadID", authorize, (req, res) => {
+  Thread.updateOne(
+    { _id: req.params.threadID },
+    { $push: { comments: req.body } },
+    (err, result) => {
+      if (err) res.json({ success: false, message: "Could not save comment" });
+      if (result) {
+        console.log(result);
+        res.json({ success: true });
+      }
+    }
+  );
 });
 
 //will respond with json specifying number of courses created, taken and completed

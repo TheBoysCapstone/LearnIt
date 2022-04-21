@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Thread from "./thread.js";
 
-const Forum = ({ user, setComponent }) => {
+const Forum = ({ user }) => {
   const [showThreads, setShowThreads] = useState(true);
   const [threads, setThreads] = useState([]);
   const [thread, setThread] = useState({});

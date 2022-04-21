@@ -79,9 +79,8 @@ router.get("/:id", authorize, (req, res) => {
 
 router.get("/:id/get-courses/:category", authorize, (req, res) => {
   let id = mongoose.Types.ObjectId(req.params.id);
-  console.log("id ", id);
 
-  Course.find({ userID: { $ne: id } })
+  Course.find({ userID: { $ne: id }, topic: req.params.category })
     .populate("userID")
     .exec((err, course) => {
       res.json({ success: true, course: course });
@@ -167,7 +166,6 @@ router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
         });
         const result = await completedCourse.save();
         if (result) {
-          console.log(error);
           res.json({
             success: false,
             message: "Course completed",
@@ -214,7 +212,6 @@ router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
 });
 
 router.post("/:id/create-thread", authorize, (req, res) => {
-  console.log("Body", req.body);
   const thread = new Thread({
     title: req.body.title,
     topic: req.body.topic,
@@ -233,7 +230,6 @@ router.get("/:id/get-threads", authorize, (req, res) => {
   Thread.find()
     .populate("author", "username")
     .exec((err, result) => {
-      
       if (err) res.json({ success: false, message: "Query failed" });
       if (res) res.json({ success: true, threads: result });
     });
@@ -246,7 +242,7 @@ router.get("/:id/get-thread/:threadID", authorize, (req, res) => {
       path: "comments",
       populate: {
         path: "author",
-        select: "username"
+        select: "username",
       },
     })
     .exec((err, result) => {
@@ -262,7 +258,6 @@ router.post("/:id/post-comment/:threadID", authorize, (req, res) => {
     (err, result) => {
       if (err) res.json({ success: false, message: "Could not save comment" });
       if (result) {
-        console.log(result);
         res.json({ success: true });
       }
     }

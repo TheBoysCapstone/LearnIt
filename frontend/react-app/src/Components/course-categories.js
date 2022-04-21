@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "./card.js";
+import Courses from "./courses.js";
 
 const categories = [
   {
@@ -34,28 +35,34 @@ const categories = [
   },
 ];
 
-const Categories = ({ handler, setCategory }) => {
+const Categories = ({ user }) => {
+  const [showCourses, setShowCourses] = useState(false);
+  const [category, setCategory] = useState("");
   const handleClick = (category) => {
-    handler("courses")
+    setShowCourses(true);
     setCategory(category)
-  }
+  };
 
-  return (
-    <>
-      <div className="container high-width">
-        <h3>Course Categories</h3>
-        {categories.map((course, index) => (
-          <Card
-            key={index}
-            title={course.category}
-            color={course.color}
-            description={course.description}
-            handler={handleClick}
-          />
-        ))}
-      </div>
-    </>
-  );
+  if (!showCourses) {
+    return (
+      <>
+        <div className="container high-width">
+          <h3>Course Categories</h3>
+          {categories.map((course, index) => (
+            <Card
+              key={index}
+              title={course.category}
+              color={course.color}
+              description={course.description}
+              handler={()=>handleClick(course.category)}
+            />
+          ))}
+        </div>
+      </>
+    );
+  } else {
+    return <Courses user={user} category={category} />;
+  }
 };
 
 export default Categories;

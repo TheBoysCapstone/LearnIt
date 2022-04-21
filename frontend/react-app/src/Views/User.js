@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Profiler } from "react";
 import axios from "axios";
 import Menu from "../Components/menu.js";
 import CourseForm from "../Components/course-form.js";
 import Categories from "../Components/course-categories.js";
-import Courses from "../Components/courses.js";
-import Course from "../Components/course.js";
 import Main from "../Components/main.js";
 import Forum from "../Components/forum.js";
 
+const User = ({ user, setRedirect }) => {
+  console.log(user)
+  const components = {
+    mainPage: ()=><Main user={user}/>,
+    newCourse: CourseForm,
+    joinCourse: Categories,
+    forum: Forum,
+    userProfile: "doesn't exist yet",
+  };
 
-const User = ({ user, setRedirect, setUser }) => {
-  const [component, setComponent] = useState("Main");
-  const [category, setCategory] = useState("");
-  const [courseID, setCourseID] = useState("");
+  const [componentName, setComponentName] = useState("mainPage");
+  
 
   const handleLogout = () => {
     axios({
@@ -28,56 +33,39 @@ const User = ({ user, setRedirect, setUser }) => {
   };
 
   useEffect(() => {
-    if (component === "Logout") {
+    if (componentName === "logout") {
       handleLogout();
     }
-  }, [component]);
+  }, [componentName]);
 
-  if (component === "New Course") {
+  
+
+  if (componentName === "newCourse") {
     return (
       <>
-        <Menu handler={setComponent} />
+        <Menu handler={setComponentName} />
         <CourseForm user={user} />
       </>
     );
-  } else if (component === "Join Course") {
+  } else if (componentName === "joinCourse") {
     return (
       <>
-        <Menu handler={setComponent} />
-        <Categories handler={setComponent} setCategory={setCategory} />
+        <Menu handler={setComponentName} />
+        <Categories user={user} />
       </>
     );
-  } else if (component === "courses") {
+  } else if (componentName === "mainPage") {
     return (
       <>
-        <Menu handler={setComponent} />
-        <Courses
-          user={user}
-          category={category}
-          handler={setComponent}
-          setCourseID={setCourseID}
-        />
-      </>
-    );
-  } else if (component === "course") {
-    return (
-      <>
-        <Menu handler={setComponent} />
-        <Course user={user} courseID={courseID} setComponent={setComponent} />
-      </>
-    );
-  } else if (component === "Main") {
-    return (
-      <>
-        <Menu handler={setComponent} />
+        <Menu handler={setComponentName} />
         <Main user={user} />
       </>
     );
-  } else if (component === "Forum") {
+  } else if (componentName === "forum") {
     return (
       <>
-        <Menu handler={setComponent} />
-        <Forum user={user} setComponent={setComponent} />
+        <Menu handler={setComponentName} />
+        <Forum user={user} />
       </>
     );
   } else {

@@ -3,7 +3,7 @@ import axios from "axios";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 
-const Course = ({ user, courseID, setComponent }) => {
+const Course = ({ user, courseID}) => {
   const [course, setCourse] = useState({});
   const [questions, setQuestions] = useState([]);
   const [video, setVideo] = useState("");
@@ -112,7 +112,7 @@ const Course = ({ user, courseID, setComponent }) => {
           <div>{parse(DOMPurify.sanitize(course.body))}</div>
           {questions.map((question, questionIndex) => (
             <div key={questionIndex} className="question-form">
-              {messages.length != 0 ? (
+              {messages.length !== 0 ? (
                 <div>
                   <h4 className="green-text center-text">
                     {messages[questionIndex]["correct"]}

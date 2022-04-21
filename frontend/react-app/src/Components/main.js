@@ -18,7 +18,8 @@ const options = [
     tag: "completed",
   },
 ];
-const Main = ({ user }) => {
+const Main = ({ user={} }) => {
+  console.log("user", user)
   const [numCourses, setNumCourses] = useState({
     created: 0,
     saved: 0,
@@ -33,7 +34,6 @@ const Main = ({ user }) => {
       withCredentials: true,
     }).then((res) => {
       if (res.data && res.data.success) {
-        console.log(res.data);
         setNumCourses({
           created: res.data.created,
           saved: res.data.saved,

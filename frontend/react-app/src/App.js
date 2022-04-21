@@ -7,7 +7,7 @@ import Logo from "./Components/logo.js"
 
 function App() {
   const [screen, setScreen] = useState("signup");
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState();
  
 
   //fires when the component is loaded

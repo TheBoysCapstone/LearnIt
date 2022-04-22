@@ -2,25 +2,31 @@ import React, { useState, useEffect } from "react";
 
 import axios from "axios";
 import Course from "./course";
-import CourseModes from "../Configs/courseModes"
 
-const Courses = ({ user, category }) => {
+const courseSettings = {
+  saved: { color: "info", buttonText: "Continue course" },
+  completed: { color: "danger", buttonText: "Retake course" },
+  all: { color: "success", buttonText: "Start course" },
+};
+
+const Courses = ({ user, query }) => {
   const [courses, setCourses] = useState([]);
   const [showCourse, setShowCourse] = useState(false);
   const [courseID, setCourseID] = useState("");
   const [message, setMessage] = useState("Loading...");
 
+  console.log(query)
   useEffect(() => {
-    let url = `http://localhost:8080/${user._id}/get-courses/${category}`;
     axios({
       method: "GET",
-      url: url,
+      url: query,
       withCredentials: true,
     }).then((res) => {
       if (res.data && res.data.success) {
         if (res.data.course.length <= 0) {
           setMessage("No courses exist in this category");
         } else {
+          console.log(res.data.course);
           setCourses(res.data.course);
         }
       } else {
@@ -52,17 +58,17 @@ const Courses = ({ user, category }) => {
             </div>
 
             <button
-              className="green-btn"
+              className={courseSettings[course.status].color}
               onClick={(e) => clickHandler(e, index)}
             >
-              Start Course
+              {courseSettings[course.status].buttonText}
             </button>
           </div>
         ))}
       </>
     );
   } else if (showCourse) {
-    return <Course user={user} courseID={courseID}/>;
+    return <Course user={user} courseID={courseID} />;
   } else {
     return <h3>{message}</h3>;
   }

@@ -35,9 +35,13 @@ const categories = [
   },
 ];
 
+
+
 const Categories = ({ user }) => {
+  
   const [showCourses, setShowCourses] = useState(false);
   const [category, setCategory] = useState("");
+  const query = `http://localhost:8080/${user._id}/get-courses/${category}`;
   const handleClick = (category) => {
     setShowCourses(true);
     setCategory(category)
@@ -61,7 +65,7 @@ const Categories = ({ user }) => {
       </>
     );
   } else {
-    return <Courses user={user} category={category} />;
+    return <Courses user={user} query={query}/>;
   }
 };
 

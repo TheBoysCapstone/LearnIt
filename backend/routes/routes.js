@@ -77,15 +77,63 @@ router.get("/:id", authorize, (req, res) => {
   res.json({ success: true, user: req.user, redirectTo: "user" });
 });
 
-router.get("/:id/get-courses/:category", authorize, (req, res) => {
+router.get("/:id/get-courses/:category", authorize, async (req, res) => {
   let id = mongoose.Types.ObjectId(req.params.id);
+  let status = "";
 
-  Course.find({ userID: { $ne: id }, topic: req.params.category })
+  let courses = await Course.find({
+    userID: { $ne: id },
+    topic: req.params.category,
+  })
     .populate("userID")
-    .exec((err, course) => {
-      res.json({ success: true, course: course });
+    .lean();
+
+  let promise = new Promise((resolve, reject) => {
+    courses.map(async (course, index) => {
+      if (await CompletedCourse.findOne({ courseID: course._id })) {
+        courses[index].status = "completed";
+
+        resolve(true);
+      } else if (await SaveCourse.findOne({ courseID: course._id })) {
+        courses[index].status = "saved";
+
+        resolve(true);
+      } else {
+        course[index].status = "new";
+
+        resolve(true);
+      }
     });
+  });
+
+  promise.then((resolve, reject) => {
+    if (resolve) {
+      res.json({ success: true, course: courses });
+    }
+  });
 });
+
+router.get("/:id/get-saved-courses", authorize, async (req, res) => {
+  let courses = await SaveCourse.find({ userID: req.params.id })
+    .select("-_id")
+    .select("-userID")
+    .populate({
+      path: "courseID",
+      populate: {
+        path: "userID",
+        select: "username",
+      },
+    })
+    .lean();
+
+  courses = courses.map((course) => {
+    course.courseID.status = "saved";
+    return course.courseID;
+  });
+  res.json({ success: true, course: courses });
+});
+
+router.get("/:id/get-completed-courses", authorize, (req, res) => {});
 
 //
 router.get("/:id/get-course/:courseID", authorize, async (req, res) => {

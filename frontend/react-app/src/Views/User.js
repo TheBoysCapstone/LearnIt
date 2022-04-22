@@ -7,7 +7,6 @@ import Main from "../Components/main.js";
 import Forum from "../Components/forum.js";
 
 const User = ({ user, setRedirect }) => {
-  console.log(user)
   const components = {
     mainPage: ()=><Main user={user}/>,
     newCourse: CourseForm,

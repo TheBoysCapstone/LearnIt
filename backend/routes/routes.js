@@ -37,7 +37,7 @@ router.post("/register", (req, res, next) => {
     } else if (req.body.password.search(/[a-z]/) < 0) {
       res.json({
         error: true,
-        message: "Password must contain a lowercase leter",
+        message: "Password must contain a lowercase letter",
       });
     } else if (req.body.password.search(/[A-Z]/) < 0) {
       res.json({
@@ -133,7 +133,25 @@ router.get("/:id/get-saved-courses", authorize, async (req, res) => {
   res.json({ success: true, course: courses });
 });
 
-router.get("/:id/get-completed-courses", authorize, (req, res) => {});
+router.get("/:id/get-completed-courses", authorize, async (req, res) => {
+  let courses = await CompletedCourse.find({ userID: req.params.id })
+    .select("-_id")
+    .select("-userID")
+    .populate({
+      path: "courseID",
+      populate: {
+        path: "userID",
+        select: "username",
+      },
+    })
+    .lean();
+
+  courses = courses.map((course) => {
+    course.courseID.status = "completed";
+    return course.courseID;
+  });
+  res.json({ success: true, course: courses });
+});
 
 //
 router.get("/:id/get-course/:courseID", authorize, async (req, res) => {

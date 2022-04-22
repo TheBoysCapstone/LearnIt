@@ -15,7 +15,6 @@ const Courses = ({ user, query }) => {
   const [courseID, setCourseID] = useState("");
   const [message, setMessage] = useState("Loading...");
 
-  console.log(query)
   useEffect(() => {
     axios({
       method: "GET",

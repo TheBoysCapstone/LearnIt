@@ -28,8 +28,8 @@ const Main = ({ user }) => {
     saved: 0,
     completed: 0,
   });
-   const [showCourses, setShowCourses] = useState(false);
-   const [uri, setUri] = useState("")
+  const [showCourses, setShowCourses] = useState(false);
+  const [uri, setUri] = useState("");
 
   useEffect(() => {
     const url = `http://localhost:8080/${user._id}/main`;
@@ -49,8 +49,12 @@ const Main = ({ user }) => {
   }, []);
 
   const handleClick = (value) => {
-    setUri(value.url)
+    setUri(value.url);
     setShowCourses(true);
+  };
+
+  const handleGoBack = () => {
+    setShowCourses(false);
   };
 
   if (!showCourses) {
@@ -61,7 +65,9 @@ const Main = ({ user }) => {
             <div
               key={index}
               className="main-options high-width"
-              onClick={()=>{handleClick(option)}}
+              onClick={() => {
+                handleClick(option);
+              }}
             >
               <div>
                 <p>
@@ -77,13 +83,14 @@ const Main = ({ user }) => {
         </div>
       </>
     );
-  } 
-  else {
+  } else {
     return (
-      <Courses
-        user={user}
-        query={`http://localhost:8080/${user._id}${uri}`}
-      />
+      <>
+        <Courses
+          user={user}
+          query={`http://localhost:8080/${user._id}${uri}`}
+        />
+      </>
     );
   }
 };

@@ -6,12 +6,13 @@ import Course from "./course";
 const courseSettings = {
   saved: { color: "info", buttonText: "Continue course" },
   completed: { color: "danger", buttonText: "Retake course" },
-  all: { color: "success", buttonText: "Start course" },
+  new: { color: "success", buttonText: "Start course" },
 };
 
 const Courses = ({ user, query }) => {
   const [courses, setCourses] = useState([]);
   const [showCourse, setShowCourse] = useState(false);
+  const [showCourses, setShowCourses] = useState(false);
   const [courseID, setCourseID] = useState("");
   const [message, setMessage] = useState("Loading...");
 
@@ -26,26 +27,31 @@ const Courses = ({ user, query }) => {
           setMessage("No courses exist in this category");
         } else {
           console.log(res.data.course);
-          setCourses(res.data.course);
+          setCourses([...res.data.course]);
         }
       } else {
         setMessage("Could not load courses... Please try again");
       }
     });
   }, []);
-
+  useEffect(() => {
+    setShowCourses(true);
+    setShowCourse(false);
+  }, [courses]);
   const clickHandler = (e, index) => {
     let courseID = courses[index]._id;
     setShowCourse(true);
+    setShowCourses(false);
     setCourseID(courseID);
   };
 
-  if (courses.length > 0 && !showCourse) {
+  if (showCourses && !showCourse) {
     return (
       <>
         <h3>Courses</h3>
         {courses.map((course, index) => (
           <div className="card other" key={index}>
+          <p>{course.status}</p>
             <h1>{course.title}</h1>
             <div>
               <p>{`Created by: ${course.userID.username}`}</p>
@@ -57,10 +63,12 @@ const Courses = ({ user, query }) => {
             </div>
 
             <button
-              className={courseSettings[course.status].color}
+              className={
+                course.status ? courseSettings[course.status].color : ""
+              }
               onClick={(e) => clickHandler(e, index)}
             >
-              {courseSettings[course.status].buttonText}
+              {course.status ? courseSettings[course.status].buttonText : ""}
             </button>
           </div>
         ))}

@@ -10,6 +10,8 @@ const CompletedCourse = require("../models/completed-course.js");
 const SaveCourse = require("../models/saved-course.js");
 const Thread = require("../models/thread");
 const authorize = require("../middleware/authorize");
+const course = require("../models/course");
+const async = require("async");
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -79,38 +81,41 @@ router.get("/:id", authorize, (req, res) => {
 
 router.get("/:id/get-courses/:category", authorize, async (req, res) => {
   let id = mongoose.Types.ObjectId(req.params.id);
-  let status = "";
 
-  let courses = await Course.find({
+  Course.find({
     userID: { $ne: id },
     topic: req.params.category,
   })
-    .populate("userID")
-    .lean();
-
-  let promise = new Promise((resolve, reject) => {
-    courses.map(async (course, index) => {
-      if (await CompletedCourse.findOne({ courseID: course._id })) {
-        courses[index].status = "completed";
-
-        resolve(true);
-      } else if (await SaveCourse.findOne({ courseID: course._id })) {
-        courses[index].status = "saved";
-
-        resolve(true);
-      } else {
-        course[index].status = "new";
-
-        resolve(true);
-      }
+    .lean()
+    .then((allCourses) => {
+      CompletedCourse.find({ userID: id })
+        .lean()
+        .then((completedCourses) => {
+          SaveCourse.find({ userID: id })
+            .lean()
+            .then((savedCourses) => {
+              allCourses.map((course, index) => {
+                completedCourses.map((completedCourse, i) => {
+                  if (course._id.equals(completedCourse.courseID)) {
+                    //console.log( "Course ", course._id,"CompleteCourse: ", completedCourse.courseID,)
+                    allCourses[index].status = "completed";
+                  }
+                });
+                savedCourses.map((savedCourse, i) => {
+                  if (course._id.equals(savedCourse.courseID)) {
+                    allCourses[index].status = "saved";
+                  }
+                });
+                allCourses.map((course, index) => {
+                  if (!course.status) {
+                    allCourses[index].status = "new";
+                  }
+                });
+              });
+              res.json({ success: true, course: allCourses });
+            });
+        });
     });
-  });
-
-  promise.then((resolve, reject) => {
-    if (resolve) {
-      res.json({ success: true, course: courses });
-    }
-  });
 });
 
 router.get("/:id/get-saved-courses", authorize, async (req, res) => {

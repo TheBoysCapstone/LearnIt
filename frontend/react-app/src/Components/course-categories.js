@@ -65,7 +65,7 @@ const Categories = ({ user }) => {
       </>
     );
   } else {
-    return <Courses user={user} query={query}/>;
+    return <Courses user={user} query={query} />;
   }
 };
 

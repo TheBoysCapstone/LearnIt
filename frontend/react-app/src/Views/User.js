@@ -8,7 +8,7 @@ import Forum from "../Components/forum.js";
 
 const User = ({ user, setRedirect }) => {
   const components = {
-    mainPage: ()=><Main user={user}/>,
+    mainPage: () => <Main user={user} />,
     newCourse: CourseForm,
     joinCourse: Categories,
     forum: Forum,
@@ -16,7 +16,6 @@ const User = ({ user, setRedirect }) => {
   };
 
   const [componentName, setComponentName] = useState("mainPage");
-  
 
   const handleLogout = () => {
     axios({
@@ -37,38 +36,40 @@ const User = ({ user, setRedirect }) => {
     }
   }, [componentName]);
 
-  
-
   if (componentName === "newCourse") {
     return (
       <>
-        <Menu handler={setComponentName} />
+        <Menu handler={setComponentName} user={user} />
         <CourseForm user={user} />
       </>
     );
   } else if (componentName === "joinCourse") {
     return (
       <>
-        <Menu handler={setComponentName} />
+        <Menu handler={setComponentName} user={user} />
         <Categories user={user} />
       </>
     );
   } else if (componentName === "mainPage") {
     return (
       <>
-        <Menu handler={setComponentName} />
+        <Menu handler={setComponentName} user={user} />
         <Main user={user} />
       </>
     );
   } else if (componentName === "forum") {
     return (
       <>
-        <Menu handler={setComponentName} />
+        <Menu handler={setComponentName} user={user} />
         <Forum user={user} />
       </>
     );
   } else {
-    return <></>;
+    return (
+      <>
+        <Menu handler={setComponentName} user={user} />
+      </>
+    );
   }
 };
 

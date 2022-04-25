@@ -421,7 +421,8 @@ iframe {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgb(189, 188, 188);
-  padding: 40, 20
+  padding: 40, 20;
+  cursor: pointer;
 }
 
 .my-course-container:nth-child(2){

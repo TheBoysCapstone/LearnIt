@@ -3,7 +3,7 @@ import React from "react";
 const ModalWindow = ({ handler, settings }) => {
   return (
     <>
-      <div className="modal-container">
+      <div>
         <div className="modal-window">
           <div className="modal-text">
             <p>{settings.message}</p>
@@ -12,7 +12,9 @@ const ModalWindow = ({ handler, settings }) => {
             <button
               className={`medium-width ${settings.buttonStyle}`}
               onClick={() => handler(false)}
-            >{settings.buttonText}</button>
+            >
+              {settings.buttonText}
+            </button>
           </div>
         </div>
       </div>

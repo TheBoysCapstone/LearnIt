@@ -17,6 +17,11 @@ const Courses = ({ user, query }) => {
   const [message, setMessage] = useState("Loading...");
 
   useEffect(() => {
+    loadCourses();
+  }, []);
+
+  const loadCourses = () => {
+    console.log(query)
     axios({
       method: "GET",
       url: query,
@@ -33,25 +38,30 @@ const Courses = ({ user, query }) => {
         setMessage("Could not load courses... Please try again");
       }
     });
-  }, []);
+  };
   useEffect(() => {
     setShowCourses(true);
     setShowCourse(false);
   }, [courses]);
+
+
   const clickHandler = (e, index) => {
     let courseID = courses[index]._id;
     setShowCourse(true);
     setShowCourses(false);
     setCourseID(courseID);
   };
-
+  const handler = () => {
+    setShowCourses(true);
+    setShowCourse(false);
+    loadCourses();
+  };
   if (showCourses && !showCourse) {
     return (
       <>
         <h3>Courses</h3>
         {courses.map((course, index) => (
           <div className="card other" key={index}>
-          <p>{course.status}</p>
             <h1>{course.title}</h1>
             <div>
               <p>{`Created by: ${course.userID.username}`}</p>
@@ -75,7 +85,7 @@ const Courses = ({ user, query }) => {
       </>
     );
   } else if (showCourse) {
-    return <Course user={user} courseID={courseID} />;
+    return <Course user={user} courseID={courseID} goBack={handler} />;
   } else {
     return <h3>{message}</h3>;
   }

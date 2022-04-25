@@ -12,6 +12,7 @@ const Thread = require("../models/thread");
 const authorize = require("../middleware/authorize");
 const course = require("../models/course");
 const async = require("async");
+const { populate } = require("../models/user");
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -86,6 +87,7 @@ router.get("/:id/get-courses/:category", authorize, async (req, res) => {
     userID: { $ne: id },
     topic: req.params.category,
   })
+    .populate({ path: "userID", select: "username" })
     .lean()
     .then((allCourses) => {
       CompletedCourse.find({ userID: id })
@@ -170,22 +172,27 @@ router.get("/:id/get-created-courses", authorize, (req, res) => {
 
 //
 router.get("/:id/get-course/:courseID", authorize, async (req, res) => {
-  Course.findOne({ _id: req.params.courseID }, (err, course) => {
-    course.video = "";
-    course.questions = [];
-    Question.find({ courseID: req.params.courseID }, (err, questions) => {
-      Video.findOne({ courseID: req.params.courseID }, (err, video) => {
-        course.questions = questions;
-        course.video = video;
-        res.json({
-          success: true,
-          course: course,
-          questions: questions,
-          video: video,
+  Course.findOne({ _id: req.params.courseID })
+    .populate({ path: "userID", select: "username" })
+    .exec()
+    .then((course) => {
+      if (course) {
+        course.video = "";
+        course.questions = [];
+        Question.find({ courseID: req.params.courseID }, (err, questions) => {
+          Video.findOne({ courseID: req.params.courseID }, (err, video) => {
+            course.questions = questions;
+            course.video = video;
+            res.json({
+              success: true,
+              course: course,
+              questions: questions,
+              video: video,
+            });
+          });
         });
-      });
+      }
     });
-  });
 });
 
 //this will save the course and questions into the database
@@ -283,14 +290,9 @@ router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
       }
     }
   );
-  res.json({
-    success: true,
-    message: "Course already completed",
-  });
 });
 
 router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
-  await CompletedCourse.deleteOne({ courseID: req.params.courseID });
   SaveCourse.find({ courseID: req.params.courseID }, async (err, result) => {
     if (result.length === 0) {
       const saveCourse = new SaveCourse({
@@ -309,10 +311,6 @@ router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
           message: "Course status could not be updated",
         });
     }
-  });
-  res.json({
-    success: true,
-    message: "Course already saved",
   });
 });
 

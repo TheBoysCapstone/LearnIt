@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-const Menu = ({ handler, setCourseMode}) => {
+const Menu = ({ handler, setCourseMode, user}) => {
     const menuItems = [
       { title: "Main", subtitle: "Your personal page", id: "mainPage"},
       { title: "New Course", subtitle: "Teach others", id: "newCourse"},
@@ -20,6 +20,7 @@ const Menu = ({ handler, setCourseMode}) => {
     };
     return (
       <div className="sidenav">
+      <h3>Hi, {user.username}</h3>
         <ul>
           {menuItems.map((value, index) => (
             <div key={index} onClick={(e) => handleClick(e, index)}>

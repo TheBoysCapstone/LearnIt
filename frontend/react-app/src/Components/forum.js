@@ -72,7 +72,7 @@ const Forum = ({ user }) => {
           <ForumList user={user} threads={threads} getThread={getThread} />
         ) : (
           <ForumForm
-            user={user}
+            user={user} toggleForumForm={makeThreadsVisible}
           />
         )}
 
@@ -151,7 +151,7 @@ const ForumForm = ({ user, toggleForumForm }) => {
       withCredentials: true,
     }).then((res) => {
       if (res.data.success) {
-        toggleForumForm(false);
+        toggleForumForm(true);
       }
     });
   };

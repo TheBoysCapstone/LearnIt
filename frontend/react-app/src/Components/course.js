@@ -3,7 +3,7 @@ import axios from "axios";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 
-const Course = ({ user, courseID}) => {
+const Course = ({ user, courseID, readOnly = false, goBack }) => {
   const [course, setCourse] = useState({});
   const [questions, setQuestions] = useState([]);
   const [video, setVideo] = useState("");
@@ -101,6 +101,8 @@ const Course = ({ user, courseID}) => {
     });
   };
 
+  
+
   //check if object is empty
   if (Object.keys(course).length !== 0) {
     return (
@@ -145,20 +147,28 @@ const Course = ({ user, courseID}) => {
               </div>
             </div>
           ))}
-          <button
-            className="green-btn"
-            disabled={isDisabled}
-            onClick={handleCompleteCourse}
-          >
-            Complete Course
-          </button>
-          <button
-            className="blue-btn"
-            disabled={isDisabled}
-            onClick={handleAddToCourseInProgress}
-          >
-            Save to Courses In Progress
-          </button>
+         
+          {!readOnly ? (
+            <div>
+              <button
+                className="green-btn"
+                disabled={isDisabled}
+                onClick={handleCompleteCourse}
+              >
+                Complete Course
+              </button>
+              <button
+                className="blue-btn"
+                disabled={isDisabled}
+                onClick={handleAddToCourseInProgress}
+              >
+                Save to Courses In Progress
+              </button>
+            </div>
+          ) : (
+            <div></div>
+          )}
+          <button className="danger" onClick={()=>goBack(true)}>Go Back</button>
         </div>
       </>
     );

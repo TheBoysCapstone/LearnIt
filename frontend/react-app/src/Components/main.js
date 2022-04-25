@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Courses from "./courses";
+import MyCourses from "./my-courses";
 
 const Main = ({ user }) => {
   const options = [
@@ -29,6 +30,7 @@ const Main = ({ user }) => {
     completed: 0,
   });
   const [showCourses, setShowCourses] = useState(false);
+  const [component, setComponent] = useState("main")
   const [uri, setUri] = useState("");
 
   useEffect(() => {
@@ -49,15 +51,15 @@ const Main = ({ user }) => {
   }, []);
 
   const handleClick = (value) => {
-    setUri(value.url);
-    setShowCourses(true);
+    setUri(value.url)
+    setComponent(value.tag)
   };
 
   const handleGoBack = () => {
     setShowCourses(false);
   };
 
-  if (!showCourses) {
+  if (component==='main') {
     return (
       <>
         <div className="main-options-container">
@@ -83,7 +85,13 @@ const Main = ({ user }) => {
         </div>
       </>
     );
-  } else {
+  } else if (component==='created') {
+    return (
+      <>
+        <MyCourses user={user} />
+      </>
+    );
+  } else if(component==='saved' || component==='completed'){
     return (
       <>
         <Courses

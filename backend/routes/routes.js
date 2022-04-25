@@ -158,6 +158,16 @@ router.get("/:id/get-completed-courses", authorize, async (req, res) => {
   res.json({ success: true, course: courses });
 });
 
+router.get("/:id/get-created-courses", authorize, (req, res) => {
+  Course.find({ userID: req.params.id }, (err, courses) => {
+    if (err) {
+      res.json({ success: false, message: "Server error" });
+    } else {
+      res.json({ success: true, courses: courses });
+    }
+  });
+});
+
 //
 router.get("/:id/get-course/:courseID", authorize, async (req, res) => {
   Course.findOne({ _id: req.params.courseID }, (err, course) => {
@@ -222,6 +232,30 @@ router.post("/:id/create-course", authorize, async (req, res) => {
     }
   }
   res.json({ success: true });
+});
+
+router.post("/:id/delete-course", authorize, (req, res) => {
+  Course.findOne({ _id: req.body.id }, (err, result) => {
+    if (result && result.userID.equals(req.params.id)) {
+      Course.deleteOne({ _id: req.body.id }, (err, result) => {
+        if (err) {
+          res.json({ success: false, message: "Could not delete course" });
+        } else {
+          SaveCourse.findOneAndDelete(
+            { courseID: req.body.id },
+            (err, result) => {
+              CompletedCourse.findOneAndDelete(
+                { courseID: req.body.id },
+                (err, result) => {
+                  res.json({ success: true });
+                }
+              );
+            }
+          );
+        }
+      });
+    }
+  });
 });
 
 //save course to a collection of completed courses

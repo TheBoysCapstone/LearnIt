@@ -412,6 +412,29 @@ iframe {
   width: 50%;
   margin: auto;
 }
+.my-courses-container{
+  margin: 40px  auto;
+  
+}
+.my-course-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgb(189, 188, 188);
+  padding: 40, 20
+}
+
+.my-course-container:nth-child(2){
+  border-top: 1px solid rgb(189, 188, 188);
+}
+
+.my-course-btn-group{
+  display: flex;
+  justify-content: space-between;
+}
+.my-course-btn-group button:first-child {
+  margin-right: 15px;
+}
 
 .success {
   background-color: #04aa6d;

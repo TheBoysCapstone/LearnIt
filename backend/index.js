@@ -5,6 +5,8 @@ const session = require('express-session')
 const bodyParser = require("body-parser")
 const cors = require('cors')
 const routes = require('./routes/routes.js')
+const https = require("https")
+const fs = require("fs")
 
 
 
@@ -47,8 +49,14 @@ app.use(passport.session());
 
 //routes
 app.use('/', routes)
-
-app.listen(port, () => {
+/*
+https.createServer({
+  key: fs.readFileSync("./certificate/server.key"),
+  cert: fs.readFileSync("./certificate/server.cert")
+},
+app).listen(port, () => {
   console.log(`Example app listening on port ${port}`)})
-
+*/
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)})
 

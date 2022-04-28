@@ -1,13 +1,13 @@
 import React, {useState} from 'react'
 
-const Menu = ({ handler }) => {
+const Menu = ({ handler, setCourseMode, user}) => {
     const menuItems = [
-      { title: "Main", subtitle: "Your personal page" },
-      { title: "New Course", subtitle: "Teach others" },
-      { title: "Join Course", subtitle: "Start learning" },
-      { title: "Forum", subtitle: "Talk about it" },
-      { title: "Profile", subtitle: "Edit personal info" },
-      { title: "Logout", subtitle: "Take a break" },
+      { title: "Main", subtitle: "Your personal page", id: "mainPage"},
+      { title: "New Course", subtitle: "Teach others", id: "newCourse"},
+      { title: "Join Course", subtitle: "Start learning", id: "joinCourse" },
+      { title: "Forum", subtitle: "Talk about it", id: "forum" },
+      { title: "Profile", subtitle: "Edit personal info", id: "userProfile" },
+      { title: "Logout", subtitle: "Take a break", id: "logout" },
     ];
   
     const [activeId, setActiveId] = useState(0);
@@ -20,12 +20,13 @@ const Menu = ({ handler }) => {
     };
     return (
       <div className="sidenav">
+      <h3>Hi, {user.username}</h3>
         <ul>
           {menuItems.map((value, index) => (
             <div key={index} onClick={(e) => handleClick(e, index)}>
               <li
                 className={index === activeId ? "active" : ""}
-                data-location={value.title}
+                data-location={value.id}
               >
                 <strong>{value.title}</strong>
                 <small>{value.subtitle}</small>

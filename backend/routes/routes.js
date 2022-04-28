@@ -10,6 +10,9 @@ const CompletedCourse = require("../models/completed-course.js");
 const SaveCourse = require("../models/saved-course.js");
 const Thread = require("../models/thread");
 const authorize = require("../middleware/authorize");
+const course = require("../models/course");
+const async = require("async");
+const { populate } = require("../models/user");
 
 router.get("/", (req, res) => {
   if (req.user) {
@@ -37,7 +40,7 @@ router.post("/register", (req, res, next) => {
     } else if (req.body.password.search(/[a-z]/) < 0) {
       res.json({
         error: true,
-        message: "Password must contain a lowercase leter",
+        message: "Password must contain a lowercase letter",
       });
     } else if (req.body.password.search(/[A-Z]/) < 0) {
       res.json({
@@ -77,35 +80,119 @@ router.get("/:id", authorize, (req, res) => {
   res.json({ success: true, user: req.user, redirectTo: "user" });
 });
 
-router.get("/:id/get-courses/:category", authorize, (req, res) => {
+router.get("/:id/get-courses/:category", authorize, async (req, res) => {
   let id = mongoose.Types.ObjectId(req.params.id);
-  console.log("id ", id);
 
-  Course.find({ userID: { $ne: id } })
-    .populate("userID")
-    .exec((err, course) => {
-      res.json({ success: true, course: course });
+  Course.find({
+    userID: { $ne: id },
+    topic: req.params.category,
+  })
+    .populate({ path: "userID", select: "username" })
+    .lean()
+    .then((allCourses) => {
+      CompletedCourse.find({ userID: id })
+        .lean()
+        .then((completedCourses) => {
+          SaveCourse.find({ userID: id })
+            .lean()
+            .then((savedCourses) => {
+              allCourses.map((course, index) => {
+                completedCourses.map((completedCourse, i) => {
+                  if (course._id.equals(completedCourse.courseID)) {
+                    //console.log( "Course ", course._id,"CompleteCourse: ", completedCourse.courseID,)
+                    allCourses[index].status = "completed";
+                  }
+                });
+                savedCourses.map((savedCourse, i) => {
+                  if (course._id.equals(savedCourse.courseID)) {
+                    allCourses[index].status = "saved";
+                  }
+                });
+                allCourses.map((course, index) => {
+                  if (!course.status) {
+                    allCourses[index].status = "new";
+                  }
+                });
+              });
+              res.json({ success: true, course: allCourses });
+            });
+        });
     });
+});
+
+router.get("/:id/get-saved-courses", authorize, async (req, res) => {
+  let courses = await SaveCourse.find({ userID: req.params.id })
+    .select("-_id")
+    .select("-userID")
+    .populate({
+      path: "courseID",
+      populate: {
+        path: "userID",
+        select: "username",
+      },
+    })
+    .lean();
+
+  courses = courses.map((course) => {
+    course.courseID.status = "saved";
+    return course.courseID;
+  });
+  res.json({ success: true, course: courses });
+});
+
+router.get("/:id/get-completed-courses", authorize, async (req, res) => {
+  let courses = await CompletedCourse.find({ userID: req.params.id })
+    .select("-_id")
+    .select("-userID")
+    .populate({
+      path: "courseID",
+      populate: {
+        path: "userID",
+        select: "username",
+      },
+    })
+    .lean();
+
+  courses = courses.map((course) => {
+    course.courseID.status = "completed";
+    return course.courseID;
+  });
+  res.json({ success: true, course: courses });
+});
+
+router.get("/:id/get-created-courses", authorize, (req, res) => {
+  Course.find({ userID: req.params.id }, (err, courses) => {
+    if (err) {
+      res.json({ success: false, message: "Server error" });
+    } else {
+      res.json({ success: true, courses: courses });
+    }
+  });
 });
 
 //
 router.get("/:id/get-course/:courseID", authorize, async (req, res) => {
-  Course.findOne({ _id: req.params.courseID }, (err, course) => {
-    course.video = "";
-    course.questions = [];
-    Question.find({ courseID: req.params.courseID }, (err, questions) => {
-      Video.findOne({ courseID: req.params.courseID }, (err, video) => {
-        course.questions = questions;
-        course.video = video;
-        res.json({
-          success: true,
-          course: course,
-          questions: questions,
-          video: video,
+  Course.findOne({ _id: req.params.courseID })
+    .populate({ path: "userID", select: "username" })
+    .exec()
+    .then((course) => {
+      if (course) {
+        course.video = "";
+        course.questions = [];
+        Question.find({ courseID: req.params.courseID }, (err, questions) => {
+          Video.findOne({ courseID: req.params.courseID }, (err, video) => {
+            course.questions = questions;
+            course.video = video;
+            res.json({
+              success: true,
+              course: course,
+              questions: questions,
+              video: video,
+            });
+          });
         });
-      });
+      }
     });
-  });
 });
 
 //this will save the course and questions into the database
@@ -154,6 +241,30 @@ router.post("/:id/create-course", authorize, async (req, res) => {
   res.json({ success: true });
 });
 
+router.post("/:id/delete-course", authorize, (req, res) => {
+  Course.findOne({ _id: req.body.id }, (err, result) => {
+    if (result && result.userID.equals(req.params.id)) {
+      Course.deleteOne({ _id: req.body.id }, (err, result) => {
+        if (err) {
+          res.json({ success: false, message: "Could not delete course" });
+        } else {
+          SaveCourse.findOneAndDelete(
+            { courseID: req.body.id },
+            (err, result) => {
+              CompletedCourse.findOneAndDelete(
+                { courseID: req.body.id },
+                (err, result) => {
+                  res.json({ success: true });
+                }
+              );
+            }
+          );
+        }
+      });
+    }
+  });
+});
+
 //save course to a collection of completed courses
 router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
   await SaveCourse.deleteOne({ courseID: req.params.courseID });
@@ -167,7 +278,6 @@ router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
         });
         const result = await completedCourse.save();
         if (result) {
-          console.log(error);
           res.json({
             success: false,
             message: "Course completed",
@@ -180,14 +290,9 @@ router.post("/:id/complete-course/:courseID", authorize, async (req, res) => {
       }
     }
   );
-  res.json({
-    success: true,
-    message: "Course already completed",
-  });
 });
 
 router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
-  await CompletedCourse.deleteOne({ courseID: req.params.courseID });
   SaveCourse.find({ courseID: req.params.courseID }, async (err, result) => {
     if (result.length === 0) {
       const saveCourse = new SaveCourse({
@@ -207,14 +312,9 @@ router.post("/:id/save-course/:courseID", authorize, async (req, res) => {
         });
     }
   });
-  res.json({
-    success: true,
-    message: "Course already saved",
-  });
 });
 
 router.post("/:id/create-thread", authorize, (req, res) => {
-  console.log("Body", req.body);
   const thread = new Thread({
     title: req.body.title,
     topic: req.body.topic,
@@ -233,7 +333,6 @@ router.get("/:id/get-threads", authorize, (req, res) => {
   Thread.find()
     .populate("author", "username")
     .exec((err, result) => {
-      
       if (err) res.json({ success: false, message: "Query failed" });
       if (res) res.json({ success: true, threads: result });
     });
@@ -246,7 +345,7 @@ router.get("/:id/get-thread/:threadID", authorize, (req, res) => {
       path: "comments",
       populate: {
         path: "author",
-        select: "username"
+        select: "username",
       },
     })
     .exec((err, result) => {
@@ -262,7 +361,6 @@ router.post("/:id/post-comment/:threadID", authorize, (req, res) => {
     (err, result) => {
       if (err) res.json({ success: false, message: "Could not save comment" });
       if (result) {
-        console.log(result);
         res.json({ success: true });
       }
     }

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "./card.js";
+import Courses from "./courses.js";
 
 const categories = [
   {
@@ -34,28 +35,38 @@ const categories = [
   },
 ];
 
-const Categories = ({ handler, setCategory }) => {
-  const handleClick = (category) => {
-    handler("courses")
-    setCategory(category)
-  }
 
-  return (
-    <>
-      <div className="container high-width">
-        <h3>Course Categories</h3>
-        {categories.map((course, index) => (
-          <Card
-            key={index}
-            title={course.category}
-            color={course.color}
-            description={course.description}
-            handler={handleClick}
-          />
-        ))}
-      </div>
-    </>
-  );
+
+const Categories = ({ user }) => {
+  
+  const [showCourses, setShowCourses] = useState(false);
+  const [category, setCategory] = useState("");
+  const query = `http://localhost:8080/${user._id}/get-courses/${category}`;
+  const handleClick = (category) => {
+    setShowCourses(true);
+    setCategory(category)
+  };
+
+  if (!showCourses) {
+    return (
+      <>
+        <div className="container high-width">
+          <h3>Course Categories</h3>
+          {categories.map((course, index) => (
+            <Card
+              key={index}
+              title={course.category}
+              color={course.color}
+              description={course.description}
+              handler={()=>handleClick(course.category)}
+            />
+          ))}
+        </div>
+      </>
+    );
+  } else {
+    return <Courses user={user} query={query} />;
+  }
 };
 
 export default Categories;

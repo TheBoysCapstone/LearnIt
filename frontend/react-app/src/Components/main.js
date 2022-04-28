@@ -1,29 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Courses from "./courses";
+import MyCourses from "./my-courses";
 
-const options = [
-  {
-    name: "Courses Created",
-    description: "number of courses created by the user",
-    tag: "created",
-  },
-  {
-    name: "Courses Saved",
-    description: "number of courses in which the user is enrolled",
-    tag: "saved",
-  },
-  {
-    name: "Courses Completed",
-    description: "number of courses completed by the user",
-    tag: "completed",
-  },
-];
 const Main = ({ user }) => {
+  const options = [
+    {
+      name: "Courses Created",
+      description: "number of courses created by the user",
+      tag: "created",
+      url: "/get-created-courses",
+    },
+    {
+      name: "Courses Saved",
+      description: "number of courses in which the user is enrolled",
+      tag: "saved",
+      url: "/get-saved-courses",
+    },
+    {
+      name: "Courses Completed",
+      description: "number of courses completed by the user",
+      tag: "completed",
+      url: "/get-completed-courses",
+    },
+  ];
   const [numCourses, setNumCourses] = useState({
     created: 0,
     saved: 0,
     completed: 0,
   });
+  const [showCourses, setShowCourses] = useState(false);
+  const [component, setComponent] = useState("main")
+  const [uri, setUri] = useState("");
 
   useEffect(() => {
     const url = `http://localhost:8080/${user._id}/main`;
@@ -33,7 +41,6 @@ const Main = ({ user }) => {
       withCredentials: true,
     }).then((res) => {
       if (res.data && res.data.success) {
-        console.log(res.data);
         setNumCourses({
           created: res.data.created,
           saved: res.data.saved,
@@ -43,25 +50,57 @@ const Main = ({ user }) => {
     });
   }, []);
 
-  return (
-    <>
-      <div className="main-options-container">
-        {options.map((option, index) => (
-          <div key={index} className="main-options high-width">
-            <div>
-              <p>
-                <strong>{option.name}</strong>
-              </p>
-              <p>
-                <small>{option.description}</small>
-              </p>
+  const handleClick = (value) => {
+    setUri(value.url)
+    setComponent(value.tag)
+  };
+
+  const handleGoBack = () => {
+    setShowCourses(false);
+  };
+
+  if (component==='main') {
+    return (
+      <>
+        <div className="main-options-container">
+          {options.map((option, index) => (
+            <div
+              key={index}
+              className="main-options high-width"
+              onClick={() => {
+                handleClick(option);
+              }}
+            >
+              <div>
+                <p>
+                  <strong>{option.name}</strong>
+                </p>
+                <p>
+                  <small>{option.description}</small>
+                </p>
+              </div>
+              <div className="course-number">{numCourses[option.tag]}</div>
             </div>
-            <div className="course-number">{numCourses[option.tag]}</div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
+          ))}
+        </div>
+      </>
+    );
+  } else if (component==='created') {
+    return (
+      <>
+        <MyCourses user={user} />
+      </>
+    );
+  } else if(component==='saved' || component==='completed'){
+    return (
+      <>
+        <Courses
+          user={user}
+          query={`http://localhost:8080/${user._id}${uri}`}
+        />
+      </>
+    );
+  }
 };
 
 export default Main;

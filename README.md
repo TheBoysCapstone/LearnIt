@@ -1,7 +1,8 @@
 # LearnIt
 
 # Project Overview
-LearnIt/Documentation: Consists of security documentations such as vulnerability assessment, security matrix, and a security response plan
+LearnIt/Documentation: Consists of security documentations such as vulnerability assessment, security matrix, a security response plan, and project manuals such as
+user manuals and deployment/installation instructions
 
 LearnIt/backend: Consists of the backend components such as the routes used, models, middleware, logger, database, and certificate for https
 
